@@ -37,8 +37,16 @@ The TabView is a way to display a set of tabs and their respective content. TabV
     </TabViewItem>
 </TabView>
 ```
+<img src="images/basic-tabview.gif" Width="250" /> 
 
-![TabView](images/basic-tabview.gif)
+Sounds good, but ... _why create this control?_.
+
+This control has been created with the idea of being able to customize absolutely everything in a simple way.
+- **Fully customized tabs**.
+- Nested tabs in any way.
+- Badges support, etc.
+  
+<img src="images/fabtab.png" Width="250" /> 
 
 ## TabView
 
