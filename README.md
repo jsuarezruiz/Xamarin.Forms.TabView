@@ -93,6 +93,7 @@ This control has been created with the idea of being able to customize absolutel
 ## Upcoming features
 
 - Include **TabItemsSource** property in TabView to be able to add tabs from a source dynamically.
+- TabStripBorderColor and TabStripBorderWidth.
 
 ## Screenshots
 
