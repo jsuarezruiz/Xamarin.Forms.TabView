@@ -1,0 +1,90 @@
+# TabView
+
+The TabView is a way to display a set of tabs and their respective content. TabViews are useful for displaying several views of content.
+
+```
+<TabView 
+    TabStripPlacement="Bottom"
+    TabStripBackgroundColor="Blue"
+    TabStripHeight="60"
+    TabContentBackgroundColor="Yellow">
+    <TabViewItem
+        Icon="triangle"
+        Text="Tab 1"
+        TextColor="White"
+        TextColorSelected="Yellow"
+        FontSize="12">
+        <Grid 
+            BackgroundColor="Gray">
+            <Label
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Text="TabContent1" />
+        </Grid>
+    </TabViewItem>
+    <TabViewItem
+        Icon="circle"
+        Text="Tab 2"
+        TextColor="White"
+        TextColorSelected="Yellow"
+        FontSize="12">
+        <Grid>
+            <Label    
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Text="TabContent2" />
+        </Grid>
+    </TabViewItem>
+</TabView>
+```
+
+![TabView](images/basic-tabview.gif)
+
+## TabView
+
+| Property   |      Type      |
+|----------|:-------------:|
+| SelectedIndex |  Int |
+| TabStripPlacement |    TabStripPlacement   |
+| TabStripBackgroundColor | Color |
+| TabContentBackgroundColor | Color |
+| TabContentHeight | Double |
+| TabStripHeight | Double |
+| TabContentHeight | Double |
+| IsTabTransitionEnabled | Bool |
+| IsSwipeEnabled | Bool |
+
+
+| Event   |      Description      |
+|----------|:-------------:|
+| SelectionChanged |   |
+
+## TabViewItem
+
+| Property   |      Type      | 
+|----------|:-------------:|
+| Text |  String |
+| TextColor |    Color   |
+| TextColorSelected | Color |
+| FontSize | FontSize |
+| FontFamily | String |
+| FontAttributes | FontAttributes |
+| Icon | ImageSource |
+| IconSelected | ImageSource |
+| Content | View |
+| BadgeText | Bool |
+| BadgeTextColor | Color |
+| BadgeBackgroundColor | Color |
+| IsSelected | Bool |
+
+| Event   |      Description      |
+|----------|:-------------:|
+| TabTapped |   |
+
+## Screenshots
+
+<img src="images/custom-tabs.gif" Width="200" /> <img src="images/nested-tabs.gif" Width="200" /> <img src="images/scroll-tabs.gif" Width="200" /> <img src="images/tabplacement.gif" Width="200" /> <img src="images/tab-events.gif" Width="200" /> <img src="images/tab-badge.gif" Width="200" />
+
+## Copyright and license
+
+Code released under the [MIT license](https://opensource.org/licenses/MIT).
