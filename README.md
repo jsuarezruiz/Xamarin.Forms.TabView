@@ -91,7 +91,7 @@ This control has been created with the idea of being able to customize absolutel
 
 ## Screenshots
 
-<img src="images/custom-tabs.gif" Width="200" /> <img src="images/nested-tabs.gif" Width="200" /> <img src="images/scroll-tabs.gif" Width="200" /> <img src="images/tabplacement.gif" Width="200" /> <img src="images/tab-events.gif" Width="200" /> <img src="images/tab-badge.gif" Width="200" />
+<img src="images/basic-tabview.gif" Width="200" /> <img src="images/fabtab.png" Width="200" /> <img src="images/custom-tabs.gif" Width="200" /> <img src="images/nested-tabs.gif" Width="200" /> <img src="images/scroll-tabs.gif" Width="200" /> <img src="images/tabplacement.gif" Width="200" /> <img src="images/tab-events.gif" Width="200" /> <img src="images/tab-badge.gif" Width="200" />
 
 ## Copyright and license
 
