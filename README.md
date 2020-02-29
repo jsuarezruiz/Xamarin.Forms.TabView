@@ -44,6 +44,7 @@ Sounds good, but ... _why create this control?_.
 This control has been created with the idea of being able to customize absolutely everything in a simple way.
 - **Fully customized tabs**.
 - Nested tabs in any way.
+- Gestures support.
 - Badges support, etc.
   
 <img src="images/fabtab.png" Width="250" /> 
@@ -88,6 +89,10 @@ This control has been created with the idea of being able to customize absolutel
 | Event   |      Description      |
 |----------|:-------------:|
 | TabTapped |   |
+
+## Upcoming features
+
+- Include **TabItemsSource** property in TabView to be able to add tabs from a source dynamically.
 
 ## Screenshots
 
