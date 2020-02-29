@@ -86,6 +86,7 @@ This control has been created with the idea of being able to customize absolutel
 | BadgeBackgroundColor | Color |
 | IsSelected | Bool |
 
+
 | Event   |      Description      |
 |----------|:-------------:|
 | TabTapped |   |
@@ -93,10 +94,11 @@ This control has been created with the idea of being able to customize absolutel
 ## Upcoming features
 
 - Include **TabItemsSource** property in TabView to be able to add tabs from a source dynamically.
+- TabStripTemplate (DataTemplate) and TabContentTemplate (DataTemplate).
 - Include lazy loading support.
 - Support RTL.
 - Accesibility support.
-- TabStripBorderColor and TabStripBorderWidth.
+- More TabStrip customization: TabStripBorderColor and TabStripBorderWidth.
 - Review integration with Visual and Shell.
   
 ## Screenshots
