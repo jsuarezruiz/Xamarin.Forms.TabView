@@ -42,7 +42,8 @@ The TabView is a way to display a set of tabs and their respective content. TabV
 Sounds good, but ... _why create this control?_.
 
 This control has been created with the idea of being able to customize absolutely everything in a simple way.
-- **Fully customized tabs**.
+- **Fully customized tabs**. You can customize the content of each tab, the tabstrip, the tab indicator or the tab content.
+- Lazy loading support.
 - Nested tabs in any way.
 - Gestures support.
 - Badges support, etc.
