@@ -53,9 +53,16 @@ This control has been created with the idea of being able to customize absolutel
 
 | Property   |      Type      |
 |----------|:-------------:|
+| IsLazy |  Bool |
 | SelectedIndex |  Int |
 | TabStripPlacement |    TabStripPlacement   |
 | TabStripBackgroundColor | Color |
+| TabStripBackgroundView | View |
+| TabIndicatorColor | Color |
+| TabIndicatorHeight | double |
+| TabIndicatorWidth | double |
+| TabIndicatorPlacement | TabIndicatorPlacement |
+| TabIndicatorView | View |
 | TabContentBackgroundColor | Color |
 | TabContentHeight | Double |
 | TabStripHeight | Double |
@@ -67,6 +74,7 @@ This control has been created with the idea of being able to customize absolutel
 | Event   |      Description      |
 |----------|:-------------:|
 | SelectionChanged |   |
+| Scrolled |   |
 
 ## TabViewItem
 
@@ -76,15 +84,20 @@ This control has been created with the idea of being able to customize absolutel
 | TextColor |    Color   |
 | TextColorSelected | Color |
 | FontSize | FontSize |
+| FontSizeSelected | FontSize |
 | FontFamily | String |
+| FontFamilySelected | String |
 | FontAttributes | FontAttributes |
+| FontAttributesSelected | FontAttributes |
 | Icon | ImageSource |
 | IconSelected | ImageSource |
 | Content | View |
 | BadgeText | Bool |
 | BadgeTextColor | Color |
 | BadgeBackgroundColor | Color |
+| BadgeBackgroundColorSelected | Color |
 | IsSelected | Bool |
+| TapCommand | ICommand |
 
 
 | Event   |      Description      |
@@ -94,8 +107,8 @@ This control has been created with the idea of being able to customize absolutel
 ## Upcoming features
 
 - Include **TabItemsSource** property in TabView to be able to add tabs from a source dynamically.
-- TabStripTemplate (DataTemplate) and TabContentTemplate (DataTemplate).
-- Include lazy loading support.
+- TabItemTemplate (DataTemplate).
+- Allow to disable or hide Tabs.
 - Support RTL.
 - Accesibility support.
 - More TabStrip customization: TabStripBorderColor and TabStripBorderWidth.
