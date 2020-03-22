@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TabView.Sample.Views.MainView"
+    Title="TabView Gallery">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <Button
+                    x:Name="BasicTabsBtn"
+                    Text="Basic Tabs Gallery"
+                    Clicked="OnBasicTabsBtnClicked"/>
+                <Button
+                    x:Name="CustomTabsBtn"
+                    Text="Custom Tabs Gallery"
+                    Clicked="OnCustomTabsBtnClicked"/>
+                <Button
+                    x:Name="LazyTabsBtn"
+                    Text="Lazy Tabs Gallery"
+                    Clicked="OnLazyTabsBtnClicked"/>
+                <Button
+                    x:Name="SegmentControlBtn"
+                    Text="Segment Tabs Gallery"
+                    Clicked="OnSegmentControlBtnClicked"/>
+                <Button
+                    x:Name="FabTabBtn"
+                    Text="FAB Tab Gallery"
+                    Clicked="OnFabTabBtnClicked"/>
+                <Button
+                    x:Name="NestedTabsBtn"
+                    Text="Nested Tabs Gallery"
+                    Clicked="OnNestedTabsBtnClicked"/>
+                <Button
+                    x:Name="ScrollTabsBtn"
+                    Text="Scroll Tabs Gallery"
+                    Clicked="OnScrollTabsBtnClicked"/>
+                <Button
+                    x:Name="TabEventsBtn"
+                    Text="Tab Events Gallery"
+                    Clicked="OnTabEventsBtnClicked"/>
+                <Button
+                    x:Name="TabPlacementBtn"
+                    Text="TabPlacement Gallery"
+                    Clicked="OnTabPlacementBtnClicked"/>
+                <!-- Work in Progress -->
+                <Button
+                    x:Name="TabFlowDirectionBtn"
+                    IsVisible="False"
+                    Text="Tab FlowDirection Gallery"
+                    Clicked="OnTabFlowDirectionBtnClicked"/>
+                <Button
+                    x:Name="TabBadgeBtn"
+                    Text="Tab Badge Gallery"
+                    Clicked="OnTabBadgeBtnClicked"/>
+                <Button
+                    x:Name="TabIndicatorViewBtn"
+                    Text="Custom Indicator Gallery"
+                    Clicked="OnTabIndicatorViewBtnClicked"/>
+                <Button
+                    x:Name="TabStripBackgroundViewBtn"
+                    Text="Animated TabStrip Gallery"
+                    Clicked="OnTabStripBackgroundViewBtnClicked"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

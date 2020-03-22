@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.TabView"
+    x:Class="TabView.Sample.Views.SegmentTabsGallery"
+    Title="Segment Tabs Gallery">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <ControlTemplate
+		        x:Key="TabItemTemplate">
+                <Grid>
+                    <BoxView
+				        BackgroundColor="#88000000"
+				        IsVisible="{TemplateBinding IsSelected}" />
+                    <Grid
+				        VerticalOptions="Center"
+				        HorizontalOptions="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+					        Grid.Column="0"
+					        WidthRequest="20"
+					        HeightRequest="20"
+					        VerticalOptions="Center"
+					        Source="{TemplateBinding CurrentIcon}">
+                            <Image.Triggers>
+                                <DataTrigger
+							        TargetType="Image"
+							        Binding="{TemplateBinding IsSelected}"
+							        Value="false">
+                                    <Setter
+								        Property="Opacity"
+								        Value="0.7" />
+                                </DataTrigger>
+                            </Image.Triggers>
+                        </Image>
+                        <Label
+					        Grid.Column="1"
+					        VerticalOptions="Center"
+					        HorizontalOptions="Start"
+					        Text="{TemplateBinding Text}"
+					        TextColor="{TemplateBinding TextColor}"
+					        FontSize="{TemplateBinding FontSize}" />
+                        <controls:BadgeView
+                            Scale="0.6"
+                            HeightRequest="24"
+                            WidthRequest="24"
+				            Text="{TemplateBinding BadgeText}"
+				            BackgroundColor="{TemplateBinding BadgeBackgroundColor}"
+				            TextColor="{ TemplateBinding BadgeTextColor}"
+				            HorizontalOptions="Center"
+				            VerticalOptions="Start"
+				            TranslationX="66"
+				            TranslationY="-6" />           
+                    </Grid>
+                </Grid>
+            </ControlTemplate>
+    
+            <Style
+		        x:Key="TabItemStyle"
+		        TargetType="controls:TabViewItem">
+                <Setter
+			        Property="ControlTemplate"
+			        Value="{StaticResource TabItemTemplate}" />
+                <Setter
+			        Property="FontSize"
+			        Value="16" />
+                <Setter
+			        Property="TextColor"
+			        Value="#CCFFFFFF" />
+                <Setter
+			        Property="TextColorSelected"
+			        Value="#FFFFFF" />
+                <Setter
+			        Property="BadgeTextColor"
+			        Value="#FFFFFF" />
+                <Setter
+			        Property="BadgeBackgroundColor"
+			        Value="#FF0000" />
+            </Style>
+    
+            <Style
+		        x:Key="CustomTabStyle"
+		        TargetType="controls:TabView">    
+                <Setter
+			        Property="TabStripHeight"
+			        Value="48" />
+                <Setter
+			        Property="TabStripBackgroundColor"
+			        Value="#33000000" />
+                <Setter
+			        Property="TabContentBackgroundColor"
+			        Value="#FFFFFF" />
+                <Setter
+                    Property="TabStripPlacement"
+                    Value="Top"/>
+                <Setter
+			        Property="IsTabTransitionEnabled"
+			        Value="False" />
+            </Style>
+
+            <x:String x:Key="IconPlay">&#xf40a;</x:String>
+            <x:String x:Key="IconDownload">&#xf1da;</x:String>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid>
+            <controls:TabView
+                Style="{StaticResource CustomTabStyle}">
+                <controls:TabViewItem 
+                    Text="Tab 1"
+                    Style="{StaticResource TabItemStyle}">
+                    <controls:TabViewItem.Icon>
+                        <FontImageSource
+                            FontFamily="{DynamicResource MaterialFontFamily}"
+                            Glyph="{StaticResource IconPlay}"
+                            Size="24"
+                            Color="#979797" />
+                    </controls:TabViewItem.Icon>
+                    <controls:TabViewItem.IconSelected>
+                        <FontImageSource
+                            FontFamily="{DynamicResource MaterialFontFamily}"
+                            Glyph="{StaticResource IconPlay}"
+                            Size="24"
+                            Color="#FF0000" />
+                    </controls:TabViewItem.IconSelected>
+                    <Grid 
+                        BackgroundColor="LawnGreen">
+                        <Label
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="TabContent1" />
+                    </Grid>
+                </controls:TabViewItem>
+                <controls:TabViewItem
+                    Text="Tab 2"
+                    BadgeText="4"
+                    Style="{StaticResource TabItemStyle}">
+                    <controls:TabViewItem.Icon>
+                        <FontImageSource
+                            FontFamily="{DynamicResource MaterialFontFamily}"
+                            Glyph="{StaticResource IconDownload}"
+                            Size="24"
+                            Color="#979797" />
+                    </controls:TabViewItem.Icon>
+                    <controls:TabViewItem.IconSelected>
+                        <FontImageSource
+                            FontFamily="{DynamicResource MaterialFontFamily}"
+                            Glyph="{StaticResource IconDownload}"
+                            Size="24"
+                            Color="#FF0000" />
+                    </controls:TabViewItem.IconSelected>
+                    <Grid
+                        BackgroundColor="LightCoral">
+                        <Label    
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="TabContent2" />
+                    </Grid>
+                </controls:TabViewItem>
+            </controls:TabView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
