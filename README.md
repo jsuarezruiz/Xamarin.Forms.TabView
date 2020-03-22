@@ -107,6 +107,7 @@ This control has been created with the idea of being able to customize absolutel
 
 ## Upcoming features
 
+Functionality in development or to be implemented:
 - Include **TabItemsSource** property in TabView to be able to add tabs from a source dynamically.
 - TabItemTemplate (DataTemplate).
 - Allow to disable or hide Tabs.
