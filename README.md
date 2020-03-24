@@ -43,7 +43,8 @@ Sounds good, but ... _why create this control?_.
 
 This control has been created with the idea of being able to customize absolutely everything in a simple way.
 - **Fully customized tabs**. You can customize the content of each tab, the tabstrip, the tab indicator or the tab content.
-- Lazy loading support.
+- **Lazy loading** support.
+- Dynamic tabs.
 - Nested tabs in any way.
 - Gestures support.
 - Badges support, etc.
@@ -54,6 +55,9 @@ This control has been created with the idea of being able to customize absolutel
 
 | Property   |      Type      |
 |----------|:-------------:|
+| TabItemsSource |  IEnumerable |
+| TabViewItemDataTemplate |  DataTemplate |
+| TabContentDataTemplate |  DataTemplate |
 | IsLazy |  Bool |
 | SelectedIndex |  Int |
 | TabStripPlacement |    TabStripPlacement   |
@@ -108,8 +112,6 @@ This control has been created with the idea of being able to customize absolutel
 ## Upcoming features
 
 Functionality in development or to be implemented:
-- Include **TabItemsSource** property in TabView to be able to add tabs from a source dynamically.
-- TabItemTemplate (DataTemplate).
 - Allow to disable or hide Tabs.
 - Support RTL.
 - Accesibility support.
