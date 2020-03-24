@@ -44,6 +44,7 @@ namespace Xamarin.Forms
         {
             if (bindable is TabView tabView)
             {
+                // TODO: If ItemsSource implements INotifyCollectionChanged, detect changes in the collection and update the TabView.
                 tabView.UpdateTabItemsSource();
             }
         }
