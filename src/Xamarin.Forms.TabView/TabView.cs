@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -27,10 +28,46 @@ namespace Xamarin.Forms
 
         public ObservableCollection<TabViewItem> TabItems { get; set; }
 
-        // TODO: Include TabItemsSource, TabItemTemplate, HasTabStripShadow.
+        // TODO: Include HasTabStripShadow, etc.
+
+        public static readonly BindableProperty TabItemsSourceProperty =
+            BindableProperty.Create(nameof(TabItemsSource), typeof(IEnumerable), typeof(TabView), null,
+                propertyChanged: OnTabItemsSourceChanged);
+
+        public IEnumerable TabItemsSource
+        {
+            get => (IEnumerable)GetValue(TabItemsSourceProperty);
+            set { SetValue(TabItemsSourceProperty, value); }
+        }
+
+        static void OnTabItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is TabView tabView)
+            {
+                tabView.UpdateTabItemsSource();
+            }
+        }
+
+        public static readonly BindableProperty TabViewItemDataTemplateProperty =
+            BindableProperty.Create(nameof(TabViewItemDataTemplate), typeof(DataTemplate), typeof(TabView), null);
+
+        public DataTemplate TabViewItemDataTemplate
+        {
+            get => (DataTemplate)GetValue(TabViewItemDataTemplateProperty);
+            set { SetValue(TabViewItemDataTemplateProperty, value); }
+        }
+
+        public static readonly BindableProperty TabContentDataTemplateProperty =
+           BindableProperty.Create(nameof(TabContentDataTemplate), typeof(DataTemplate), typeof(TabView), null);
+
+        public DataTemplate TabContentDataTemplate
+        {
+            get => (DataTemplate)GetValue(TabContentDataTemplateProperty);
+            set { SetValue(TabContentDataTemplateProperty, value); }
+        }
 
         public static readonly BindableProperty IsLazyProperty =
-        BindableProperty.Create(nameof(IsLazy), typeof(bool), typeof(TabView), true);
+            BindableProperty.Create(nameof(IsLazy), typeof(bool), typeof(TabView), true);
 
         public bool IsLazy
         {
@@ -493,6 +530,15 @@ namespace Xamarin.Forms
             OnTabViewScrolled(tabViewScrolledEventArgs);
         }
 
+        void ClearTabStrip()
+        {
+            foreach (var tabViewItem in TabItems)
+                ClearTabViewItem(tabViewItem);
+
+            if (_tabStripContent.Children.Count > 0)
+                _tabStripContent.Children.Clear();
+        }
+
         void ClearTabViewItem(TabViewItem tabViewItem)
         {
             tabViewItem.PropertyChanged -= OnTabViewItemPropertyChanged;
@@ -532,6 +578,11 @@ namespace Xamarin.Forms
             UpdateSelectedIndex(0);
         }
 
+        void AddTabViewItemFromTemplate(object item, int index = -1)
+        {
+            AddTabViewItemFromTemplateToTabStrip(item, index);
+        }
+
         void AddSelectionTapRecognizer(View view)
         {
             var tapRecognizer = new TapGestureRecognizer();
@@ -556,27 +607,48 @@ namespace Xamarin.Forms
             view.GestureRecognizers.Add(tapRecognizer);
         }
 
-        void AddTabViewItemToTabStrip(TabViewItem tabViewItem, int index = -1)
+        void AddTabViewItemToTabStrip(View item, int index = -1)
         {
-            var tabViewItemSizeRequest = tabViewItem.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+            var tabViewItemSizeRequest = item.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
 
             if (tabViewItemSizeRequest.Request.Height < TabStripHeight)
             {
-                tabViewItem.HeightRequest = TabStripHeight;
-                tabViewItem.VerticalOptions = TabStripPlacement == TabStripPlacement.Top ? LayoutOptions.Start : LayoutOptions.End;
+                item.HeightRequest = TabStripHeight;
+                item.VerticalOptions = TabStripPlacement == TabStripPlacement.Top ? LayoutOptions.Start : LayoutOptions.End;
             }
 
             _tabStripContent.ColumnDefinitions.Add(new ColumnDefinition()
             {
-                Width = tabViewItem.TabWidth > 0 ? tabViewItem.TabWidth : GridLength.Star
+                Width = (item is TabViewItem tabViewItem && tabViewItem.TabWidth > 0) ? tabViewItem.TabWidth : GridLength.Star
             });
 
-            _tabStripContent.Children.Insert(index, tabViewItem);
+            if (index >= 0)
+            {
+                _tabStripContent.Children.Insert(index, item);
 
-            for (int i = index; i < _tabStripContent.Children.Count; i++)
-                Grid.SetColumn(_tabStripContent.Children[i], i);
+                for (int i = index; i < _tabStripContent.Children.Count; i++)
+                    Grid.SetColumn(_tabStripContent.Children[i], i);
+            }
+            else
+            {
+                _tabStripContent.Children.Add(item);
+                int count = _tabStripContent.Children.Count - 1;
+                item.SetValue(Grid.ColumnProperty, count);
+            }
         }
 
+        void AddTabViewItemFromTemplateToTabStrip(object item, int index = -1)
+        {
+            DataTemplateSelector tabItemDataTemplate = TabViewItemDataTemplate as DataTemplateSelector;
+
+            View view = tabItemDataTemplate == null ? (View)TabViewItemDataTemplate.CreateContent() : (View)tabItemDataTemplate.SelectTemplate(item, this).CreateContent();
+            view.Parent = this;
+            view.BindingContext = item;
+
+            AddSelectionTapRecognizer(view);
+            AddTabViewItemToTabStrip(view, index);
+        }
+        
         void UpdateIsEnabled()
         {
             _tabStripContent.IsEnabled = IsEnabled;
@@ -601,6 +673,24 @@ namespace Xamarin.Forms
             Console.WriteLine(tabViewItem.Text);
         }
 
+        void UpdateTabItemsSource()
+        {
+            if (TabItemsSource == null || TabViewItemDataTemplate == null)
+                return;
+
+            ClearTabStrip();
+
+            _contentContainer.ItemsSource = TabItemsSource;
+            _contentContainer.ItemTemplate = TabContentDataTemplate;
+
+            foreach (object item in TabItemsSource)
+            {
+                AddTabViewItemFromTemplate(item);
+            }
+
+            UpdateSelectedIndex(0);
+        }
+
         void UpdateSelectedIndex(int position)
         {
             if (position < 0)
@@ -614,25 +704,28 @@ namespace Xamarin.Forms
             SelectedIndex = newPosition;
             _contentContainer.Position = SelectedIndex;
 
-            for (int index = 0; index < TabItems.Count; index++)
+            Device.BeginInvokeOnMainThread(
+                async () => await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[position], ScrollToPosition.MakeVisible, false));
+
+            if (TabItems.Count > 0)
             {
-                if (index == position)
+                for (int index = 0; index < TabItems.Count; index++)
                 {
-                    TabItems[position].IsSelected = true;
-                    Device.BeginInvokeOnMainThread(async () => await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[position], ScrollToPosition.MakeVisible, false));
+                    if (index == position)
+                        TabItems[position].IsSelected = true;
+                    else
+                        TabItems[index].IsSelected = false;
                 }
-                else
-                    TabItems[index].IsSelected = false;
+
+                var currentTabItem = TabItems[position];
+                currentTabItem.SizeChanged += OnCurrentTabItemSizeChanged;
+                UpdateTabIndicatorPosition(currentTabItem);
             }
+            else
+                UpdateTabIndicatorPosition(position);
 
             if (newPosition != oldPosition)
             {
-                var currentTabItem = TabItems[position];
-
-                currentTabItem.SizeChanged += OnCurrentTabItemSizeChanged;
-
-                UpdateTabIndicatorPosition(currentTabItem);
-
                 var selectionChangedArgs = new TabSelectionChangedEventArgs()
                 {
                     NewPosition = newPosition,
@@ -645,7 +738,7 @@ namespace Xamarin.Forms
 
         void OnCurrentTabItemSizeChanged(object sender, EventArgs e)
         {
-            var currentTabItem = (TabViewItem)sender;
+            var currentTabItem = (View)sender;
             UpdateTabIndicatorWidth(TabIndicatorWidth > 0 ? TabIndicatorWidth : currentTabItem.Width);
             UpdateTabIndicatorPosition(currentTabItem);
             currentTabItem.SizeChanged -= OnCurrentTabItemSizeChanged;
@@ -756,7 +849,19 @@ namespace Xamarin.Forms
             _contentContainer.IsScrollAnimated = isTabTransitionEnabled;
         }
 
-        void UpdateTabIndicatorPosition(TabViewItem currentTabViewItem)
+        void UpdateTabIndicatorPosition(int tabViewItemIndex)
+        {
+            var currentTabViewItem = _tabStripContent.Children[tabViewItemIndex];
+
+            if(currentTabViewItem.Width <= 0)
+                currentTabViewItem.SizeChanged += OnCurrentTabItemSizeChanged;
+            else
+                UpdateTabIndicatorWidth(currentTabViewItem.Width);
+
+            UpdateTabIndicatorPosition(currentTabViewItem);
+        }
+
+        void UpdateTabIndicatorPosition(View currentTabViewItem)
         {
             double width = TabIndicatorWidth > 0 ? (currentTabViewItem.Width - _tabStripIndicator.Width) : 0;
             double position = currentTabViewItem.X + (width / 2);

@@ -30,6 +30,11 @@ namespace TabView.Sample.Views
             Navigation.PushAsync(new LazyLoadingTabsGallery());
         }
 
+        void OnTabItemsSourceBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new TabItemsSourceGallery());
+        }
+
         void OnNestedTabsBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new NestedTabsGallery());

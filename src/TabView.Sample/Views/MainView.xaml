@@ -20,6 +20,10 @@
                     Text="Lazy Tabs Gallery"
                     Clicked="OnLazyTabsBtnClicked"/>
                 <Button
+                    x:Name="TabItemsSourceBtn"
+                    Text="TabItemsSource Gallery"
+                    Clicked="OnTabItemsSourceBtnClicked"/>
+                <Button
                     x:Name="SegmentControlBtn"
                     Text="Segment Tabs Gallery"
                     Clicked="OnSegmentControlBtnClicked"/>

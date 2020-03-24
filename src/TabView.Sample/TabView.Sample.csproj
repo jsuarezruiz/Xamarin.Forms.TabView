@@ -18,5 +18,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms.TabView\Xamarin.Forms.TabView.csproj" />
   </ItemGroup>
-
+  
 </Project>
