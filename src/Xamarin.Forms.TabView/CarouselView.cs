@@ -314,7 +314,7 @@ namespace Xamarin.Forms.TabView
                 bool addedCurrentView = AddView(_currentView);
 
                 if (addedCurrentView)
-                    _existingViews.Add(Position, _currentView);
+                    AddOrUpdateCache(Position, _currentView);
             }
 
             UpdateOtherViews();
@@ -452,7 +452,7 @@ namespace Xamarin.Forms.TabView
 
             if (addedNextView)
             {
-                _existingViews.Add(nextIndex, _nextView);
+                AddOrUpdateCache(nextIndex, _nextView);
                 UpdateViewIndex(_nextView);
             }
 
@@ -460,9 +460,20 @@ namespace Xamarin.Forms.TabView
 
             if (addedPreviousView)
             {
-                _existingViews.Add(prevIndex, _previousView);
+                AddOrUpdateCache(prevIndex, _previousView);
                 UpdateViewIndex(_previousView);
             }
+        }
+
+        void AddOrUpdateCache(int key, View value)
+        {
+            if (_existingViews == null)
+                return;
+
+            if (_existingViews.ContainsKey(key))
+                _existingViews.Remove(key);
+
+            _existingViews.Add(key, value);
         }
 
         View GetView(int index, ScrollDirection? scrollDirection)

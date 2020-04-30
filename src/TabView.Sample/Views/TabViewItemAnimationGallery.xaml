@@ -65,7 +65,7 @@
                 TabIndicatorColor="Yellow"
                 TabContentBackgroundColor="Yellow">
                 <controls:TabViewItem
-                    Icon="triangle"
+                    Icon="triangle.png"
                     Text="Tab 1"
                     Style="{StaticResource TabItemStyle}">
                     <controls:TabViewItem.TabAnimation>
@@ -80,7 +80,7 @@
                     </Grid>
                 </controls:TabViewItem>
                 <controls:TabViewItem
-                    Icon="circle"
+                    Icon="circle.png"
                     Text="Tab 2"
                     Style="{StaticResource TabItemStyle}">
                     <controls:TabViewItem.TabAnimation>

@@ -20,8 +20,8 @@
                 TabIndicatorColor="Yellow"
                 TabContentBackgroundColor="Yellow">
                 <controls:TabViewItem
-                    Icon="triangle"
-                    IconSelected="square"
+                    Icon="triangle.png"
+                    IconSelected="square.png"
                     Text="Tab 1"
                     TextColor="White"
                     TextColorSelected="Yellow"
@@ -40,7 +40,7 @@
                     </Grid>
                 </controls:TabViewItem>
                 <controls:TabViewItem 
-                    Icon="circle"
+                    Icon="circle.png"
                     IconSelected="square"
                     Text="Tab 2"
                     TextColor="White"

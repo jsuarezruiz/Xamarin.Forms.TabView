@@ -530,6 +530,8 @@ namespace Xamarin.Forms.TabView
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(MaterialTabViewItemTemplate));
                 else if (Device.RuntimePlatform == Device.iOS)
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(CupertinoTabViewItemTemplate));
+                else if (Device.RuntimePlatform == Device.UWP)
+                    tabViewItem.ControlTemplate = new ControlTemplate(typeof(WindowsTabViewItemTemplate));
                 else
                 {
                     // Default ControlTemplate for other platforms

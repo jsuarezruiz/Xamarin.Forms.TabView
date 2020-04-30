@@ -27,7 +27,7 @@
                 <local:CustomTabTransition />
             </controls:TabView.TabTransition>
             <controls:TabViewItem
-                Icon="circle"
+                Icon="circle.png"
                 Text="Tab 1"  
                 Style="{StaticResource CustomTabViewItemStyle}">
                 <Grid 
@@ -39,7 +39,7 @@
                 </Grid>
             </controls:TabViewItem>
             <controls:TabViewItem
-                Icon="square"
+                Icon="square.png"
                 Text="Tab 2"
                 Style="{StaticResource CustomTabViewItemStyle}">
                 <Grid
@@ -51,7 +51,7 @@
                 </Grid>
             </controls:TabViewItem>
             <controls:TabViewItem
-                Icon="triangle"
+                Icon="triangle.png"
                 Text="Tab 3"
                 Style="{StaticResource CustomTabViewItemStyle}">
                 <Grid
@@ -63,7 +63,7 @@
                 </Grid>
             </controls:TabViewItem>
             <controls:TabViewItem
-                Icon="circle"
+                Icon="circle.png"
                 Text="Tab 4"   
                 Style="{StaticResource CustomTabViewItemStyle}">
                 <Grid

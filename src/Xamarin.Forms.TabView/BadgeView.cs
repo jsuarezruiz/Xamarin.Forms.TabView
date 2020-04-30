@@ -97,7 +97,7 @@ namespace Xamarin.Forms.TabView
             _badgeShape = new BoxView
             {
                 BackgroundColor = BackgroundColor,
-                CornerRadius = Device.RuntimePlatform == Device.Android ? 60 : 12
+                CornerRadius = GetCornerRadius()
             };
 
             _badgeText = new Label
@@ -114,6 +114,16 @@ namespace Xamarin.Forms.TabView
             };
 
             Content = _badgeContainer;
+        }
+
+        int GetCornerRadius()
+        {
+            if (Device.RuntimePlatform == Device.Android)
+                return 60; 
+            else if (Device.RuntimePlatform == Device.UWP)
+                return 24;
+
+            return 12;
         }
 
         void UpdateBackgroundColor(Color backgroundColor)

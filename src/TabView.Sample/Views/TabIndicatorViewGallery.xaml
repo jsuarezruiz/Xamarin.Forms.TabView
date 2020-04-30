@@ -26,7 +26,7 @@
             </controls:TabView.TabIndicatorView>
             <controls:TabViewItem
                 x:Name="Tab1"
-                Icon="triangle"
+                Icon="triangle.png"
                 Text="Tab 1"
                 TextColor="White"
                 TextColorSelected="Yellow"
@@ -44,7 +44,7 @@
             </controls:TabViewItem>
             <controls:TabViewItem
                 x:Name="Tab2"
-                Icon="circle"
+                Icon="circle.png"
                 Text="Tab 2"
                 TextColor="White"
                 TextColorSelected="Yellow"
@@ -59,7 +59,7 @@
             </controls:TabViewItem>
             <controls:TabViewItem
                 x:Name="Tab3"
-                Icon="square"
+                Icon="square.png"
                 Text="Tab 3"
                 TextColor="White"
                 TextColorSelected="Yellow"
