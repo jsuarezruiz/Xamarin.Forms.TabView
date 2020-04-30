@@ -60,6 +60,11 @@ namespace TabView.Sample.Views
             Navigation.PushAsync(new TabViewItemAnimationGallery());
         }
 
+        void OnTabWidthBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new TabWidthGallery());
+        }
+
         void OnNestedTabsBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new NestedTabsGallery());

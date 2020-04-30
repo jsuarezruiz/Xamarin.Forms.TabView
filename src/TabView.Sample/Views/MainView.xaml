@@ -59,6 +59,10 @@
                     Text="FAB Tab Gallery"
                     Clicked="OnFabTabBtnClicked"/>
                 <Button
+                    x:Name="TabWidthBtn"
+                    Text="TabWidth Gallery"
+                    Clicked="OnTabWidthBtnClicked"/>
+                <Button
                     x:Name="NestedTabsBtn"
                     Text="Nested Tabs Gallery"
                     Clicked="OnNestedTabsBtnClicked"/>

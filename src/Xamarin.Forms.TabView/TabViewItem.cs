@@ -335,7 +335,7 @@ namespace Xamarin.Forms.TabView
             if (propertyName == "Renderer")
                 UpdateCurrent();
         }
-        
+
         internal virtual void OnTabTapped(TabTappedEventArgs e)
         {
             TabTappedEventHandler handler = TabTapped;

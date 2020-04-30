@@ -449,6 +449,8 @@ namespace Xamarin.Forms.TabView
                 UpdateTabViewItemIsEnabled(tabViewItem);
             else if (e.PropertyName == IsVisibleProperty.PropertyName)
                 UpdateTabViewItemIsVisible(tabViewItem);
+            else if (e.PropertyName == TabViewItem.TabWidthProperty.PropertyName)
+                UpdateTabViewItemTabWidth(tabViewItem);
         }
 
         void OnTabItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -640,6 +642,23 @@ namespace Xamarin.Forms.TabView
         {
             // TODO: Hide / Show TabViewItem
             Console.WriteLine($"Update TabViewItem IsVisible: {tabViewItem.IsVisible}");
+        }
+
+        void UpdateTabViewItemTabWidth(TabViewItem tabViewItem)
+        {
+            var index = _tabStripContent.Children.IndexOf(tabViewItem);
+            var colummns = _tabStripContent.ColumnDefinitions;
+
+            ColumnDefinition column = null;
+
+            if (index < colummns.Count)
+                column = colummns[index];
+
+            if (column == null)
+                return;
+
+            column.Width = tabViewItem.TabWidth > 0 ? tabViewItem.TabWidth : GridLength.Star;
+            UpdateTabIndicatorPosition(SelectedIndex);
         }
 
         void UpdateTabItemsSource()
