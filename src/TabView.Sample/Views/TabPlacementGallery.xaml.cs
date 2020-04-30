@@ -1,5 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
+using Xamarin.Forms.TabView;
 
 namespace TabView.Sample.Views
 {

@@ -1,10 +1,13 @@
-﻿namespace Xamarin.Forms
+﻿using System.Threading.Tasks;
+
+namespace Xamarin.Forms.TabView
 {
     public class BadgeView : ContentView
     {
         Grid _badgeContainer;
         BoxView _badgeShape;
         Label _badgeText;
+        bool _isVisible;
 
         public BadgeView()
         {
@@ -21,12 +24,27 @@
             set { SetValue(AutoHideProperty, value); }
         }
 
-        static void OnAutoHideChanged(BindableObject bindable, object oldValue, object newValue)
+        static async void OnAutoHideChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if(bindable is BadgeView badgeView)
-            {
-                badgeView.UpdateVisibility();
-            }
+            await (bindable as BadgeView)?.UpdateVisibilityAsync();
+        }
+
+        public static BindableProperty IsAnimatedProperty =
+           BindableProperty.Create(nameof(IsAnimated), typeof(bool), typeof(BadgeView), defaultValue: true);
+
+        public bool IsAnimated
+        {
+            get { return (bool)GetValue(IsAnimatedProperty); }
+            set { SetValue(IsAnimatedProperty, value); }
+        }
+
+        public static BindableProperty BadgeAnimationProperty =
+            BindableProperty.Create(nameof(BadgeAnimation), typeof(IBadgeAnimation), typeof(BadgeView), new BadgeAnimation());
+
+        public IBadgeAnimation BadgeAnimation
+        {
+            get { return (IBadgeAnimation)GetValue(BadgeAnimationProperty); }
+            set { SetValue(BadgeAnimationProperty, value); }
         }
 
         public new static BindableProperty BackgroundColorProperty =
@@ -41,10 +59,7 @@
 
         static void OnBackgroundColorChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is BadgeView badgeView)
-            {
-                badgeView.UpdateBackgroundColor((Color)newValue);
-            }
+            (bindable as BadgeView)?.UpdateBackgroundColor((Color)newValue);
         }
 
         public static BindableProperty TextColorProperty =
@@ -59,10 +74,7 @@
 
         static void OnTextColorChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is BadgeView badgeView)
-            {
-                badgeView.UpdateTextColor((Color)newValue);
-            }
+            (bindable as BadgeView)?.UpdateTextColor((Color)newValue);
         }
 
         public static BindableProperty TextProperty =
@@ -77,10 +89,7 @@
 
         static void OnTextChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is BadgeView badgeView)
-            {
-                badgeView.UpdateText((string)newValue);
-            }
+            (bindable as BadgeView)?.UpdateText((string)newValue);
         }
 
         void Initialize()
@@ -88,7 +97,7 @@
             _badgeShape = new BoxView
             {
                 BackgroundColor = BackgroundColor,
-                CornerRadius = 60
+                CornerRadius = Device.RuntimePlatform == Device.Android ? 60 : 12
             };
 
             _badgeText = new Label
@@ -117,16 +126,44 @@
             _badgeText.TextColor = textColor;
         }
 
-        void UpdateText(string text)
+        async void UpdateText(string text)
         {
             _badgeText.Text = text;
-            UpdateVisibility();
+            await UpdateVisibilityAsync();
         }
 
-        void UpdateVisibility()
+        async Task UpdateVisibilityAsync()
         {
-            IsVisible = !AutoHide ||
-                (!string.IsNullOrWhiteSpace(_badgeText.Text) && !_badgeText.Text.Trim().Equals("0"));
+            string badgeText = _badgeText.Text;
+
+            if (string.IsNullOrEmpty(badgeText))
+            {
+                IsVisible = false;
+                return;
+            }
+
+            bool badgeIsVisible = !AutoHide || !badgeText.Trim().Equals("0");
+
+            if (IsAnimated)
+            {
+                if (badgeIsVisible == _isVisible)
+                    return;
+
+                if (badgeIsVisible)
+                {
+                    IsVisible = true;
+                    await BadgeAnimation.OnAppearing(this);
+                }
+                else
+                {
+                    await BadgeAnimation.OnDisappering(this);
+                    IsVisible = false;
+                }
+
+                _isVisible = badgeIsVisible;
+            }
+            else
+                IsVisible = badgeIsVisible;
         }
     }
 }

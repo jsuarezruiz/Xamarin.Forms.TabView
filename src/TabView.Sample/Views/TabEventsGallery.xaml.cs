@@ -1,5 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
+using Xamarin.Forms.TabView;
+using ScrolledEventArgs = Xamarin.Forms.TabView.ScrolledEventArgs;
 
 namespace TabView.Sample.Views
 {
@@ -20,9 +22,9 @@ namespace TabView.Sample.Views
             InfoEventsLabel.Text += $"TabTapped - Position: {e.Position} {Environment.NewLine}";
         }
 
-        void OnTabViewScrolled(object sender, TabViewScrolledEventArgs e)
+        void OnTabViewScrolled(object sender, ScrolledEventArgs e)
         {
-            InfoEventsLabel.Text += $"Scrolled - HorizontalOffset: {e.HorizontalOffset}, HorizontalOffset: {e.HorizontalDelta} {Environment.NewLine}";
+            InfoEventsLabel.Text += $"Scrolled - Offset: {e.Offset} {Environment.NewLine}";
         }
     }
 }

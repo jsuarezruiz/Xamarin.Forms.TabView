@@ -1,5 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
+using ScrolledEventArgs = Xamarin.Forms.TabView.ScrolledEventArgs;
 
 namespace TabView.Sample.Views
 {
@@ -8,9 +9,10 @@ namespace TabView.Sample.Views
         public LazyLoadingTabsGallery()
         {
             InitializeComponent();
+            UpdateInfo();
         }
 
-        void OnTabViewScrolled(object sender, TabViewScrolledEventArgs e)
+        void OnTabViewScrolled(object sender, ScrolledEventArgs e)
         {
             UpdateInfo();
         }

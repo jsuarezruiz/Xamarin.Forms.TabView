@@ -1,6 +1,9 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
-namespace Xamarin.Forms
+namespace Xamarin.Forms.TabView
 {
     [ContentProperty(nameof(Content))]
     public class TabViewItem : TemplatedView
@@ -133,12 +136,10 @@ namespace Xamarin.Forms
             set { SetValue(IsSelectedProperty, value); }
         }
 
-        static void OnIsSelectedChanged(BindableObject bindable, object oldValue, object newValue)
+        static async void OnIsSelectedChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is TabViewItem tabViewItem)
-            {
-                tabViewItem.UpdateCurrent();
-            }
+            (bindable as TabViewItem)?.UpdateCurrent();
+            await (bindable as TabViewItem)?.UpdateTabAnimationAsync();
         }
 
         public static readonly BindableProperty BadgeTextProperty =
@@ -152,6 +153,15 @@ namespace Xamarin.Forms
 
         public static readonly BindableProperty TabWidthProperty =
             BindableProperty.Create(nameof(TabWidth), typeof(double), typeof(TabViewItem), -1d);
+
+        public static BindableProperty TabAnimationProperty =
+            BindableProperty.Create(nameof(TabAnimation), typeof(ITabViewItemAnimation), typeof(TabViewItem), null);
+
+        public ITabViewItemAnimation TabAnimation
+        {
+            get { return (ITabViewItemAnimation)GetValue(TabAnimationProperty); }
+            set { SetValue(TabAnimationProperty, value); }
+        }
 
         public string BadgeText
         {
@@ -199,11 +209,8 @@ namespace Xamarin.Forms
 
         static void OnTabViewItemPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is TabViewItem tabViewItem)
-            {
-                tabViewItem.UpdateCurrent();
-            }
-        }      
+            (bindable as TabViewItem)?.UpdateCurrent();
+        }
 
         internal static readonly BindablePropertyKey CurrentTextColorPropertyKey = BindableProperty.CreateReadOnly(nameof(CurrentTextColor), typeof(Color), typeof(TabViewItem), Color.Default);
 
@@ -321,6 +328,14 @@ namespace Xamarin.Forms
 
         public event TabTappedEventHandler TabTapped;
 
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+
+            if (propertyName == "Renderer")
+                UpdateCurrent();
+        }
+        
         internal virtual void OnTabTapped(TabTappedEventArgs e)
         {
             TabTappedEventHandler handler = TabTapped;
@@ -347,6 +362,24 @@ namespace Xamarin.Forms
             CurrentFontFamily = !IsSelected || string.IsNullOrEmpty(FontFamilySelected) ? FontFamily : FontFamilySelected;
             CurrentFontAttributes = !IsSelected || FontAttributesSelected == FontAttributes.None ? FontAttributes : FontAttributesSelected;
             CurrentBadgeBackgroundColor = !IsSelected || BadgeBackgroundColorSelected == Color.Default ? BadgeBackgroundColor : BadgeBackgroundColorSelected;
+
+            UpdateCurrentContent();
+        }
+
+        async Task UpdateTabAnimationAsync()
+        {
+            if (TabAnimation == null)
+                return;
+
+            var tabViewItemChildrens = this.GetChildren();
+
+            if (tabViewItemChildrens.Count == 0 || !(tabViewItemChildrens[0] is View view))
+                return;
+
+            if (IsSelected)
+                await TabAnimation.OnSelected(view);
+            else
+                await TabAnimation.OnDeSelected(view);
         }
     }
 }

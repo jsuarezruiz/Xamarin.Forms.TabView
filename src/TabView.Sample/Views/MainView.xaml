@@ -6,19 +6,46 @@
     Title="TabView Gallery">
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout>
+            <StackLayout
+                Padding="12">
+                <Label
+                    Text="CarouselView"
+                    FontSize="Large"/>
+                <Button
+                    x:Name="CarouselBtn"
+                    Text="CarouselView Gallery"
+                    Clicked="OnCarouselViewBtnClicked"/>
+                <Label
+                    Text="TabView"
+                    FontSize="Large"/>
                 <Button
                     x:Name="BasicTabsBtn"
                     Text="Basic Tabs Gallery"
                     Clicked="OnBasicTabsBtnClicked"/>
                 <Button
+                    x:Name="OnlyTextTabsBtn"
+                    Text="Only Text Tabs Gallery"
+                    Clicked="OnlyTextTabsBtnClicked"/>
+                <Button
                     x:Name="CustomTabsBtn"
                     Text="Custom Tabs Gallery"
                     Clicked="OnCustomTabsBtnClicked"/>
                 <Button
+                    x:Name="CyclicalTabsBtn"
+                    Text="Cyclical Tabs Gallery"
+                    Clicked="OnCyclicalTabsBtnClicked"/>
+                <Button
                     x:Name="LazyTabsBtn"
                     Text="Lazy Tabs Gallery"
                     Clicked="OnLazyTabsBtnClicked"/>
+                <Button
+                    x:Name="CustomTransitionTabsBtn"
+                    Text="Custom Transition Tabs Gallery"
+                    Clicked="OnCustomTransitionTabsBtnClicked"/>
+                <Button
+                    x:Name="TabViewItemAnimationBtn"
+                    Text="TabViewItemAnimation Gallery"
+                    Clicked="OnTabViewItemAnimationBtnClicked"/>
                 <Button
                     x:Name="TabItemsSourceBtn"
                     Text="TabItemsSource Gallery"

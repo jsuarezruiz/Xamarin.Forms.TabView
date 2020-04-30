@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xamarin.Forms
+namespace Xamarin.Forms.TabView
 {
     public class TabTappedEventArgs : EventArgs
     {

@@ -3,8 +3,8 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Xamarin.Forms.TabView;assembly=Xamarin.Forms.TabView"
-    x:Class="TabView.Sample.Views.LazyLoadingTabsGallery"
-    Title="Lazy Loading Tabs Gallery">
+    x:Class="TabView.Sample.Views.CyclicalTabsGallery"
+    Title="Cyclical Tabs Gallery">
     <ContentPage.Resources>
         <ResourceDictionary>
 
@@ -12,6 +12,14 @@
                 <Setter Property="TextColor" Value="White" />
                 <Setter Property="TextColorSelected" Value="Yellow" />
                 <Setter Property="TabWidth" Value="100" />
+            </Style>
+
+            <Style x:Key="IsCyclicalLabelStyle" TargetType="Label">
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="IsCyclicalCheckBoxStyle" TargetType="CheckBox">
+                <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
         </ResourceDictionary>
@@ -24,13 +32,11 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <controls:TabView
-                x:Name="TabView"
-                Grid.Row="0"
+                IsCyclical="{Binding Source={x:Reference IsCyclicalCheckBox}, Path=IsChecked}"
                 TabStripPlacement="Bottom"
                 TabIndicatorColor="White"
-                TabStripBackgroundColor="Red"
-                TabStripHeight="60"
-                Scrolled="OnTabViewScrolled">
+                TabStripBackgroundColor="DarkBlue"
+                TabStripHeight="60">
                 <controls:TabViewItem
                     Icon="circle"
                     Text="Tab 1"  
@@ -80,25 +86,22 @@
                     </Grid>
                 </controls:TabViewItem>
             </controls:TabView>
-            <ScrollView
-                Grid.Row="1">
-                <StackLayout
-                    Margin="12, 0">
-                    <StackLayout
-                        Orientation="Horizontal">
-                        <CheckBox
-                            VerticalOptions="Center"
-                            IsChecked="True"
-                            CheckedChanged="OnLazyCheckedChanged"/>
-                        <Label
-                            VerticalOptions="Center"
-                            Text="Lazy Loading"/>
-                    </StackLayout>
-                    <Label
-                        x:Name="InfoLabel"
-                        FontSize="10"/>
-                </StackLayout>
-            </ScrollView>
+            <Grid
+                Grid.Row="1"
+                Padding="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Text="IsCyclical:"
+                    Style="{StaticResource IsCyclicalLabelStyle}"/>
+                <CheckBox
+                    Grid.Column="1"
+                    x:Name="IsCyclicalCheckBox"
+                    IsChecked="False"
+                    Style="{StaticResource IsCyclicalCheckBoxStyle}"/>
+            </Grid>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
