@@ -2,10 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackOnBuild>true</PackOnBuild>
+    <Authors>Javier Suárez</Authors>
+    <PackageProjectUrl>https://github.com/jsuarezruiz/Xamarin.Forms.TabView</PackageProjectUrl>
+    <PackageTags>xamarin, xamarin.forms, tabview, tabbar, tab</PackageTags>
+    <Description>The TabView is a Xamarin.Forms control to display a set of tabs and their respective content.</Description>
+    <PackageId>Xamarin.Forms.TabView</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Title>Xamarin.Forms TabView</Title>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.5.0.396" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.5-dev.8">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
     
 </Project>
