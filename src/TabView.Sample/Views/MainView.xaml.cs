@@ -114,5 +114,10 @@ namespace TabView.Sample.Views
         {
             Navigation.PushAsync(new TabStripBackgroundViewGallery());
         }
+
+        void OnPerfBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new PerformanceTestGallery());
+        }
     }
 }

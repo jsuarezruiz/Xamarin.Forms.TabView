@@ -176,7 +176,7 @@ namespace Xamarin.Forms.TabView
             var index = position > Position ? (position - 1) : (position + 1);
             UpdateOtherViews(index);
 
-            var threshold = Width / 2;
+            var threshold = (Width * CompletedTransitionPercentage) + 1;
             double offset = position > Position ? -threshold : threshold;
 
             if (!UpdateBackView(offset))

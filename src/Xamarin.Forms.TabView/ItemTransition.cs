@@ -15,7 +15,7 @@ namespace Xamarin.Forms.TabView
 
             var nextTabTranslationX = Math.Sign((int)args.Direction) * args.Parent.Width + args.Offset;
 
-            if (args.NextView != null &&  Math.Abs(nextTabTranslationX) < args.Parent.Width)
+            if (args.NextView != null && Math.Abs(nextTabTranslationX) < args.Parent.Width)
                 args.NextView.TranslationX = nextTabTranslationX;
 
             return Task.FromResult(true);
@@ -27,21 +27,24 @@ namespace Xamarin.Forms.TabView
             {
                 var tcs = new TaskCompletionSource<bool>();
 
-                Animation resetAnimation = new Animation();
-
-                var animationPercentLength = AnimationLength;
-
-                if (args.CurrentView != null)
-                    resetAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationX = v, args.CurrentView.TranslationX, 0));
-
-                if (args.NextView != null)
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    resetAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationX = v, args.NextView.TranslationX, Math.Sign((int)args.Direction) * args.Parent.Width));
-                    animationPercentLength = (uint)(AnimationLength * (args.Parent.Width - Math.Abs(args.NextView.TranslationX)) / args.Parent.Width);
-                }
+                    Animation resetAnimation = new Animation();
 
-                resetAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
-                    finished: (v, t) => tcs.SetResult(true));
+                    var animationPercentLength = AnimationLength;
+
+                    if (args.CurrentView != null)
+                        resetAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationX = v, args.CurrentView.TranslationX, 0));
+
+                    if (args.NextView != null)
+                    {
+                        resetAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationX = v, args.NextView.TranslationX, Math.Sign((int)args.Direction) * args.Parent.Width));
+                        animationPercentLength = (uint)(AnimationLength * (args.Parent.Width - Math.Abs(args.NextView.TranslationX)) / args.Parent.Width);
+                    }
+
+                    resetAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
+                        finished: (v, t) => tcs.SetResult(true));
+                });
 
                 return tcs.Task;
             }
@@ -50,21 +53,24 @@ namespace Xamarin.Forms.TabView
             {
                 var tcs = new TaskCompletionSource<bool>();
 
-                Animation completeAnimation = new Animation();
-
-                var animationPercentLength = AnimationLength;
-
-                if (args.CurrentView != null)
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    completeAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationX = v, args.CurrentView.TranslationX, -Math.Sign((int)args.Direction) * args.Parent.Width));
-                    animationPercentLength = (uint)(AnimationLength * (args.Parent.Width - Math.Abs(args.CurrentView.TranslationX)) / args.Parent.Width);
-                }
+                    Animation completeAnimation = new Animation();
 
-                if (args.NextView != null)
-                    completeAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationX = v, args.NextView.TranslationX, 0));
+                    var animationPercentLength = AnimationLength;
 
-                completeAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
-                    finished: (v, t) => tcs.SetResult(true));
+                    if (args.CurrentView != null)
+                    {
+                        completeAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationX = v, args.CurrentView.TranslationX, -Math.Sign((int)args.Direction) * args.Parent.Width));
+                        animationPercentLength = (uint)(AnimationLength * (args.Parent.Width - Math.Abs(args.CurrentView.TranslationX)) / args.Parent.Width);
+                    }
+
+                    if (args.NextView != null)
+                        completeAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationX = v, args.NextView.TranslationX, 0));
+
+                    completeAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
+                        finished: (v, t) => tcs.SetResult(true));
+                });
 
                 return tcs.Task;
             }

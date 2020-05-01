@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Xamarin.Forms.TabView;assembly=Xamarin.Forms.TabView"
+    xmlns:viewmodels="clr-namespace:TabView.Sample.ViewModels"
+    x:Class="TabView.Sample.Views.PerformanceTestGallery"
+    Title="PerformanceTest Gallery">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+             <DataTemplate x:Key="MonkeyItemTemplate">
+                <Grid
+                    BackgroundColor="{Binding Color}"
+                    Padding="10"
+                    RowSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Aspect="AspectFill"
+                        Source="{Binding Image}"/>
+                    <StackLayout
+                        Grid.Column="1">
+                        <Label
+                            Text="{Binding Index}"
+                            HorizontalOptions="Center"/>
+                        <Label
+                            Text="{Binding Name}"
+                            FontSize="Title"
+                            HorizontalOptions="Center"/>
+                        <Label
+                            Text="{Binding Location}"
+                            FontSize="Subtitle"
+                            HorizontalOptions="Center"/>
+                    </StackLayout>
+                </Grid>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.BindingContext>
+        <viewmodels:PerformanceViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <Grid>
+            <controls:TabView 
+                TabStripPlacement="Bottom"
+                TabStripBackgroundColor="Blue"
+                TabStripHeight="60"
+                TabIndicatorColor="Yellow"
+                TabContentBackgroundColor="White">
+                <controls:TabViewItem
+                    Icon="triangle.png"
+                    Text="Tab 1"
+                    TextColor="White"
+                    TextColorSelected="Yellow"
+                    FontSize="12">
+                    <Grid 
+                        BackgroundColor="Gray">
+                        <CollectionView
+                            ItemsSource="{Binding Monkeys1}"
+                            ItemTemplate="{StaticResource MonkeyItemTemplate}"/>
+                    </Grid>
+                </controls:TabViewItem>
+                <controls:TabViewItem
+                    Icon="circle.png"
+                    Text="Tab 2"
+                    TextColor="White"
+                    TextColorSelected="Yellow"
+                    FontSize="12">
+                    <Grid>
+                        <CollectionView
+                            ItemsSource="{Binding Monkeys2}"
+                            ItemTemplate="{StaticResource MonkeyItemTemplate}"/>
+                    </Grid>
+                </controls:TabViewItem>
+                <controls:TabViewItem
+                    Icon="square.png"
+                    Text="Tab 3"
+                    TextColor="White"
+                    TextColorSelected="Yellow"
+                    FontSize="12">
+                    <Grid>
+                        <CollectionView
+                            ItemsSource="{Binding Monkeys3}"
+                            ItemTemplate="{StaticResource MonkeyItemTemplate}"/>
+                    </Grid>
+                </controls:TabViewItem>
+            </controls:TabView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

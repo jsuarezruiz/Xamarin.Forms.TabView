@@ -37,21 +37,24 @@ namespace TabView.Sample.Views
             {
                 var tcs = new TaskCompletionSource<bool>();
 
-                Animation resetAnimation = new Animation();
-
-                var animationPercentLength = AnimationLength;
-
-                if (args.CurrentView != null)
-                    resetAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationY = v, args.CurrentView.TranslationY, 0));
-
-                if (args.NextView != null)
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    resetAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationY = v, args.NextView.TranslationY, Math.Sign((int)args.Direction) * args.Parent.Height));
-                    animationPercentLength = (uint)(AnimationLength * (args.Parent.Height - Math.Abs(args.NextView.TranslationY)) / args.Parent.Height);
-                }
+                    Animation resetAnimation = new Animation();
 
-                resetAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
-                    finished: (v, t) => tcs.SetResult(true));
+                    var animationPercentLength = AnimationLength;
+
+                    if (args.CurrentView != null)
+                        resetAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationY = v, args.CurrentView.TranslationY, 0));
+
+                    if (args.NextView != null)
+                    {
+                        resetAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationY = v, args.NextView.TranslationY, Math.Sign((int)args.Direction) * args.Parent.Height));
+                        animationPercentLength = (uint)(AnimationLength * (args.Parent.Height - Math.Abs(args.NextView.TranslationY)) / args.Parent.Height);
+                    }
+
+                    resetAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
+                        finished: (v, t) => tcs.SetResult(true));
+                });
 
                 return tcs.Task;
             }
@@ -60,21 +63,24 @@ namespace TabView.Sample.Views
             {
                 var tcs = new TaskCompletionSource<bool>();
 
-                Animation completeAnimation = new Animation();
-
-                var animationPercentLength = AnimationLength;
-
-                if (args.CurrentView != null)
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    completeAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationY = v, args.CurrentView.TranslationY, -Math.Sign((int)args.Direction) * args.Parent.Height));
-                    animationPercentLength = (uint)(AnimationLength * (args.Parent.Height - Math.Abs(args.CurrentView.TranslationY)) / args.Parent.Height);
-                }
+                    Animation completeAnimation = new Animation();
 
-                if (args.NextView != null)
-                    completeAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationY = v, args.NextView.TranslationY, 0));
+                    var animationPercentLength = AnimationLength;
 
-                completeAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
-                    finished: (v, t) => tcs.SetResult(true));
+                    if (args.CurrentView != null)
+                    {
+                        completeAnimation.Add(0, 1, new Animation(v => args.CurrentView.TranslationY = v, args.CurrentView.TranslationY, -Math.Sign((int)args.Direction) * args.Parent.Height));
+                        animationPercentLength = (uint)(AnimationLength * (args.Parent.Height - Math.Abs(args.CurrentView.TranslationY)) / args.Parent.Height);
+                    }
+
+                    if (args.NextView != null)
+                        completeAnimation.Add(0, 1, new Animation(v => args.NextView.TranslationY = v, args.NextView.TranslationY, 0));
+
+                    completeAnimation.Commit(args.Parent, nameof(OnSelectionChanged), length: animationPercentLength, easing: AnimationEasing,
+                        finished: (v, t) => tcs.SetResult(true));
+                });
 
                 return tcs.Task;
             }
