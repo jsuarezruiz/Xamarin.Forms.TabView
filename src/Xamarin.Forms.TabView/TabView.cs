@@ -188,6 +188,21 @@ namespace Xamarin.Forms.TabView
             (bindable as TabView)?.UpdateTabStripHeight((double)newValue);
         }
 
+        public static readonly BindableProperty IsTabStripVisibleProperty =
+          BindableProperty.Create(nameof(IsTabStripVisible), typeof(bool), typeof(TabView), true,
+              propertyChanged: OnIsTabStripVisibleChanged);
+
+        public bool IsTabStripVisible
+        {
+            get { return (bool)GetValue(IsTabStripVisibleProperty); }
+            set { SetValue(IsTabStripVisibleProperty, value); }
+        }
+
+        static void OnIsTabStripVisibleChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            (bindable as TabView)?.UpdateIsTabStripVisible((bool)newValue);
+        }
+
         public static readonly BindableProperty TabContentHeightProperty =
             BindableProperty.Create(nameof(TabContentHeight), typeof(double), typeof(TabView), -1d,
                propertyChanged: OnTabContentHeightChanged);
@@ -743,10 +758,10 @@ namespace Xamarin.Forms.TabView
             if (tabStripPlacement == TabStripPlacement.Top)
             {
                 _tabStripBackground.VerticalOptions = LayoutOptions.Start;
+
                 Grid.SetRow(_tabStripContainer, 0);
                 Grid.SetRowSpan(_tabStripContainer, 2);
-                Grid.SetRow(_contentContainer, 1);
-                Grid.SetRowSpan(_contentContainer, 2);
+
                 _mainContainer.RowDefinitions[0].Height = TabStripHeight > 0 ? TabStripHeight : GridLength.Auto;
                 _mainContainer.RowDefinitions[1].Height = GridLength.Auto;
                 _mainContainer.RowDefinitions[2].Height = GridLength.Star;
@@ -755,13 +770,37 @@ namespace Xamarin.Forms.TabView
             if (tabStripPlacement == TabStripPlacement.Bottom)
             {
                 _tabStripBackground.VerticalOptions = LayoutOptions.End;
-                Grid.SetRow(_contentContainer, 0);
-                Grid.SetRowSpan(_contentContainer, 2);
+
                 Grid.SetRow(_tabStripContainer, 1);
                 Grid.SetRowSpan(_tabStripContainer, 2);
+
                 _mainContainer.RowDefinitions[0].Height = GridLength.Star;
                 _mainContainer.RowDefinitions[1].Height = GridLength.Auto;
                 _mainContainer.RowDefinitions[2].Height = TabStripHeight > 0 ? TabStripHeight : GridLength.Auto;
+            }
+
+            UpdateTabContentLayout();
+        }
+
+        void UpdateTabContentLayout()
+        {
+            if (_tabStripContainer.IsVisible)
+            {
+                if (TabStripPlacement == TabStripPlacement.Top)
+                {
+                    Grid.SetRow(_contentContainer, 1);
+                    Grid.SetRowSpan(_contentContainer, 2);
+                }
+                else
+                {
+                    Grid.SetRow(_contentContainer, 0);
+                    Grid.SetRowSpan(_contentContainer, 2);
+                }
+            }
+            else
+            {
+                Grid.SetRow(_contentContainer, 0);
+                Grid.SetRowSpan(_contentContainer, 3);
             }
         }
 
@@ -786,6 +825,13 @@ namespace Xamarin.Forms.TabView
         void UpdateTabStripHeight(double tabStripHeight)
         {
             _tabStripBackground.HeightRequest = tabStripHeight;
+        }
+
+        void UpdateIsTabStripVisible(bool isTabStripVisible)
+        {
+            _tabStripContainer.IsVisible = isTabStripVisible;
+
+            UpdateTabContentLayout();
         }
 
         void UpdateTabContentHeight(double tabContentHeight)

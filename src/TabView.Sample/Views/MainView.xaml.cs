@@ -65,6 +65,11 @@ namespace TabView.Sample.Views
             Navigation.PushAsync(new TabWidthGallery());
         }
 
+        void OnIsTabStripVisibleBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new IsTabStripVisibleGallery());
+        }
+
         void OnNestedTabsBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new NestedTabsGallery());

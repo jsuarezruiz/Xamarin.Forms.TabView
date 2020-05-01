@@ -63,6 +63,10 @@
                     Text="TabWidth Gallery"
                     Clicked="OnTabWidthBtnClicked"/>
                 <Button
+                    x:Name="IsTabStripVisibleBtn"
+                    Text="IsTabStripVisible Gallery"
+                    Clicked="OnIsTabStripVisibleBtnClicked"/>
+                <Button
                     x:Name="NestedTabsBtn"
                     Text="Nested Tabs Gallery"
                     Clicked="OnNestedTabsBtnClicked"/>
