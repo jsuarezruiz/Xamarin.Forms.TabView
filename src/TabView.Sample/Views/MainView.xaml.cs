@@ -25,6 +25,11 @@ namespace TabView.Sample.Views
             Navigation.PushAsync(new BasicTabsGallery());
         }
 
+        void OnBasicCSharpTabsBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new BasicCSharpTabsGallery());
+        }
+
         void OnlyTextTabsBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new OnlyTextTabsGallery());

@@ -20,8 +20,12 @@
                     FontSize="Large"/>
                 <Button
                     x:Name="BasicTabsBtn"
-                    Text="Basic Tabs Gallery"
+                    Text="Basic Tabs Gallery (XAML)"
                     Clicked="OnBasicTabsBtnClicked"/>
+                <Button
+                    x:Name="BasicCSharpTabsBtn"
+                    Text="Basic Tabs Gallery (C#)"
+                    Clicked="OnBasicCSharpTabsBtnClicked"/>
                 <Button
                     x:Name="OnlyTextTabsBtn"
                     Text="Only Text Tabs Gallery"
