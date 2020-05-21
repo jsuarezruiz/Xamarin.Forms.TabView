@@ -730,10 +730,6 @@ namespace Xamarin.Forms.TabView
                 return;
 
             SelectedIndex = newPosition;
-            _contentContainer.ScrollTo(SelectedIndex);
-
-            Device.BeginInvokeOnMainThread(
-                async () => await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[position], ScrollToPosition.MakeVisible, false));
 
             if (TabItems.Count > 0)
             {
@@ -746,6 +742,15 @@ namespace Xamarin.Forms.TabView
                 }
 
                 var currentTabItem = TabItems[position];
+
+                if (!currentTabItem.IsButton)
+                {
+                    _contentContainer.ScrollTo(SelectedIndex);
+
+                    Device.BeginInvokeOnMainThread(
+                        async () => await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[position], ScrollToPosition.MakeVisible, false));
+                }
+
                 currentTabItem.SizeChanged += OnCurrentTabItemSizeChanged;
                 UpdateTabIndicatorPosition(currentTabItem);
             }

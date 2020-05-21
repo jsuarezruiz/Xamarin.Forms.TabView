@@ -197,6 +197,15 @@ namespace Xamarin.Forms.TabView
             set { SetValue(BadgeBackgroundColorSelectedProperty, value); }
         }
 
+        public static readonly BindableProperty IsButtonProperty =
+            BindableProperty.Create(nameof(IsButton), typeof(bool), typeof(TabViewItem), false);
+
+        public bool IsButton
+        {
+            get => (bool)GetValue(IsButtonProperty);
+            set { SetValue(IsButtonProperty, value); }
+        }
+
         public static readonly BindableProperty TapCommandProperty =
            BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(TabViewItem), null);
 

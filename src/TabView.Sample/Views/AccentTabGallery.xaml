@@ -128,6 +128,8 @@
                 <controls:TabViewItem
                     Text="Tab 2"
                     ControlTemplate="{StaticResource FabTabItemTemplate}"
+                    IsButton="True"
+                    x:Name="fabTabButton"
                     Style="{StaticResource TabItemStyle}">
                     <controls:TabViewItem.Icon>
                         <FontImageSource
