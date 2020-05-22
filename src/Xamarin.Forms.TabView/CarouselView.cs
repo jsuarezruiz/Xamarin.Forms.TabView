@@ -168,7 +168,7 @@ namespace Xamarin.Forms.TabView
         public event EventHandler<PositionChangedEventArgs> PositionChanged;
         public event EventHandler<ScrolledEventArgs> Scrolled;
 
-        public async void ScrollTo(int position, bool animated = true)
+        public async Task ScrollToAsync(int position, bool animated = true)
         {
             if (Position == position)
                 return;
@@ -464,7 +464,7 @@ namespace Xamarin.Forms.TabView
                 UpdateViewIndex(_previousView);
             }
         }
-
+               
         void AddOrUpdateCache(int key, View value)
         {
             if (_existingViews == null)
@@ -501,7 +501,8 @@ namespace Xamarin.Forms.TabView
             if (view == null)
                 view = (View)ItemTemplate.CreateContent();
 
-            view.BindingContext = context;
+            if (view.BindingContext == null)
+                view.BindingContext = context;
 
             return view;
         }

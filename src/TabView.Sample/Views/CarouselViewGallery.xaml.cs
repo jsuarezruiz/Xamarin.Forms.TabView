@@ -10,16 +10,16 @@ namespace TabView.Sample.Views
             InitializeComponent();
         }
 
-        void OnScrollToZeroClicked(object sender, EventArgs e)
+        async void OnScrollToZeroClicked(object sender, EventArgs e)
         {
             bool isAnimated = IsAnimatedScrollToCheckBox.IsChecked;
-            CarouselView.ScrollTo(0, isAnimated);
+            await CarouselView.ScrollToAsync(0, isAnimated);
         }
 
-        void OnScrollToFiveClicked(object sender, EventArgs e)
+        async void OnScrollToFiveClicked(object sender, EventArgs e)
         {
             bool isAnimated = IsAnimatedScrollToCheckBox.IsChecked;
-            CarouselView.ScrollTo(5, isAnimated);
+            await CarouselView.ScrollToAsync(5, isAnimated);
         }
     }
 }

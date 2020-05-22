@@ -730,10 +730,12 @@ namespace Xamarin.Forms.TabView
                 return;
 
             SelectedIndex = newPosition;
-            _contentContainer.ScrollTo(SelectedIndex);
 
-            Device.BeginInvokeOnMainThread(
-                async () => await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[position], ScrollToPosition.MakeVisible, false));
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                await _contentContainer.ScrollToAsync(SelectedIndex);
+                await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[position], ScrollToPosition.MakeVisible, false);
+            });
 
             if (TabItems.Count > 0)
             {
