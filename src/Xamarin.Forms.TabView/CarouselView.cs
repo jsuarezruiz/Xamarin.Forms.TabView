@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Xamarin.Forms.TabView
 {
-    public class CarouselView : Grid
+    public class CarouselView : Grid, ICarouselViewController
     {
         const double CompletedTransitionPercentage = 0.4;
 
@@ -24,6 +25,12 @@ namespace Xamarin.Forms.TabView
         public CarouselView()
         {
             Initialize();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void Preserve()
+        {
+
         }
 
         public static readonly BindableProperty ItemsSourceProperty =
@@ -268,6 +275,10 @@ namespace Xamarin.Forms.TabView
 
         void UpdateIsSwipeEnabled(bool isSwipeEnabled = true)
         {
+            if (Device.RuntimePlatform == Device.Android ||
+                Device.RuntimePlatform == Device.iOS)
+                return;
+
             if (isSwipeEnabled)
             {
                 _panGesture.PanUpdated += OnPanUpdated;
@@ -285,7 +296,7 @@ namespace Xamarin.Forms.TabView
             Transition = tabViewItemTransition;
         }
                 
-        async void OnPanUpdated(object sender, PanUpdatedEventArgs e)
+        void OnPanUpdated(object sender, PanUpdatedEventArgs e)
         {
             if (_itemsCount < 0)
                 return;
@@ -293,14 +304,14 @@ namespace Xamarin.Forms.TabView
             switch (e.StatusType)
             {
                 case GestureStatus.Started:
-                    OnTouchStarted();
+                    TouchStarted();
                     break;
                 case GestureStatus.Running:
-                    await OnTouchChanged(e.TotalX);
+                    TouchChanged(e.TotalX);
                     break;
                 case GestureStatus.Canceled:
                 case GestureStatus.Completed:
-                    await OnTouchEnded();
+                    TouchEnded();
                     break;
             }
         }
@@ -320,12 +331,12 @@ namespace Xamarin.Forms.TabView
             UpdateOtherViews();
         }
 
-        void OnTouchStarted()
+        public void TouchStarted()
         {
             UpdateOtherViews();
         }
 
-        async Task OnTouchChanged(double offset)
+        public async void TouchChanged(double offset)
         {
             SetIsDragging(true);
 
@@ -342,7 +353,7 @@ namespace Xamarin.Forms.TabView
             RaiseScrolled();
         }
 
-        async Task OnTouchEnded()
+        public async void TouchEnded()
         {
             SetIsDragging(false);
 
@@ -464,7 +475,7 @@ namespace Xamarin.Forms.TabView
                 UpdateViewIndex(_previousView);
             }
         }
-               
+
         void AddOrUpdateCache(int key, View value)
         {
             if (_existingViews == null)
@@ -499,10 +510,10 @@ namespace Xamarin.Forms.TabView
             _existingViews.TryGetValue(index, out View view);
 
             if (view == null)
+            {
                 view = (View)ItemTemplate.CreateContent();
-
-            if (view.BindingContext == null)
                 view.BindingContext = context;
+            }
 
             return view;
         }

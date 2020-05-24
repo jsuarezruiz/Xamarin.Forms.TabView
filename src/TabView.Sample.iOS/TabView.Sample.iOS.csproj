@@ -131,6 +131,10 @@
       <Project>{08B92D62-4595-4ACF-B6ED-743B52892E72}</Project>
       <Name>TabView.Sample</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.TabView.iOS\Xamarin.Forms.TabView.iOS.csproj">
+      <Project>{459689E5-163C-49F8-956F-FB31D2C74443}</Project>
+      <Name>Xamarin.Forms.TabView.iOS</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\square.png" />

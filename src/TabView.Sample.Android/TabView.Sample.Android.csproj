@@ -108,6 +108,10 @@
       <Project>{08B92D62-4595-4ACF-B6ED-743B52892E72}</Project>
       <Name>TabView.Sample</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.TabView.Android\Xamarin.Forms.TabView.Android.csproj">
+      <Project>{335288B7-AA6F-487C-B4AA-88B9E3261BD5}</Project>
+      <Name>Xamarin.Forms.TabView.Android</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\materialdesignicons-webfont.ttf" />
