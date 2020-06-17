@@ -3,7 +3,7 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Xamarin.Forms.TabView;assembly=Xamarin.Forms.TabView"
-    x:Class="TabView.Sample.Views.AccentTabGallery"
+    x:Class="TabView.Sample.Views.FabTabGallery"
     Title="FAB Tab Gallery">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -44,11 +44,18 @@
                         Source="{TemplateBinding CurrentIcon}"
                         Padding="10"
                         HorizontalOptions="Center"
-                        BackgroundColor="{TemplateBinding CurrentTextColor}"
-                        CornerRadius="60"
+                        BackgroundColor="#FF0000"
                         HeightRequest="60"
                         WidthRequest="60"
-                        Margin="6" />
+                        Margin="6">
+                        <ImageButton.CornerRadius>
+                            <OnPlatform x:TypeArguments="x:Int32">
+                                <On Platform="iOS" Value="30"/>
+                                <On Platform="Android" Value="60"/>
+                                <On Platform="UWP" Value="24"/>
+                            </OnPlatform>
+                        </ImageButton.CornerRadius>
+                    </ImageButton>
                 </Grid>
              </ControlTemplate>
     
