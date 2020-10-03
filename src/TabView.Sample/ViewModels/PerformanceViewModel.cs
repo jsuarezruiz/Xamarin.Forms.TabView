@@ -19,11 +19,11 @@ namespace TabView.Sample.ViewModels
         {
             Monkeys1 = new ObservableCollection<Monkey>();
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 Monkeys1.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Baboon {i}",
                     Name = "Baboon",
                     Location = "Africa & Asia",
                     Details = "Baboons are African and Arabian Old World monkeys belonging to the genus Papio, part of the subfamily Cercopithecinae.",
@@ -33,7 +33,7 @@ namespace TabView.Sample.ViewModels
 
                 Monkeys1.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Capuchin Monkey {i}",
                     Name = "Capuchin Monkey",
                     Location = "Central & South America",
                     Details = "The capuchin monkeys are New World monkeys of the subfamily Cebinae. Prior to 2011, the subfamily contained only a single genus, Cebus.",
@@ -43,7 +43,7 @@ namespace TabView.Sample.ViewModels
 
                 Monkeys1.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Blue Monkey {i}",
                     Name = "Blue Monkey",
                     Location = "Central and East Africa",
                     Details = "The blue monkey or diademed monkey is a species of Old World monkey native to Central and East Africa, ranging from the upper Congo River basin east to the East African Rift and south to northern Angola and Zambia",
@@ -54,11 +54,11 @@ namespace TabView.Sample.ViewModels
 
             Monkeys2 = new ObservableCollection<Monkey>();
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 500; i++)
             {
                 Monkeys2.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Baboon {i}",
                     Name = "Baboon",
                     Location = "Africa & Asia",
                     Details = "Baboons are African and Arabian Old World monkeys belonging to the genus Papio, part of the subfamily Cercopithecinae.",
@@ -68,7 +68,7 @@ namespace TabView.Sample.ViewModels
 
                 Monkeys2.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Capuchin Monkey {i}",
                     Name = "Capuchin Monkey",
                     Location = "Central & South America",
                     Details = "The capuchin monkeys are New World monkeys of the subfamily Cebinae. Prior to 2011, the subfamily contained only a single genus, Cebus.",
@@ -78,7 +78,7 @@ namespace TabView.Sample.ViewModels
 
                 Monkeys2.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Blue Monkey {i}",
                     Name = "Blue Monkey",
                     Location = "Central and East Africa",
                     Details = "The blue monkey or diademed monkey is a species of Old World monkey native to Central and East Africa, ranging from the upper Congo River basin east to the East African Rift and south to northern Angola and Zambia",
@@ -89,11 +89,11 @@ namespace TabView.Sample.ViewModels
 
             Monkeys3 = new ObservableCollection<Monkey>();
 
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 2000; i++)
             {
                 Monkeys3.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Baboon {i}",
                     Name = "Baboon",
                     Location = "Africa & Asia",
                     Details = "Baboons are African and Arabian Old World monkeys belonging to the genus Papio, part of the subfamily Cercopithecinae.",
@@ -103,7 +103,7 @@ namespace TabView.Sample.ViewModels
 
                 Monkeys3.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Capuchin Monkey {i}",
                     Name = "Capuchin Monkey",
                     Location = "Central & South America",
                     Details = "The capuchin monkeys are New World monkeys of the subfamily Cebinae. Prior to 2011, the subfamily contained only a single genus, Cebus.",
@@ -113,7 +113,7 @@ namespace TabView.Sample.ViewModels
 
                 Monkeys3.Add(new Monkey
                 {
-                    Index = i,
+                    Index = $"Blue Monkey {i}",
                     Name = "Blue Monkey",
                     Location = "Central and East Africa",
                     Details = "The blue monkey or diademed monkey is a species of Old World monkey native to Central and East Africa, ranging from the upper Congo River basin east to the East African Rift and south to northern Angola and Zambia",

@@ -4,7 +4,7 @@ namespace TabView.Sample.Models
 {
     public class Monkey
     {
-        public int Index { get; set; }
+        public string Index { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
         public string Details { get; set; }
