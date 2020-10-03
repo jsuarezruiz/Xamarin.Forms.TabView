@@ -538,8 +538,17 @@ namespace Xamarin.Forms.TabView
 
         void ClearTabViewItem(TabViewItem tabViewItem)
         {
-            tabViewItem.PropertyChanged -= OnTabViewItemPropertyChanged;
-            _tabStripContent.Children.Remove(tabViewItem);
+            try
+            {
+                BatchBegin();
+
+                tabViewItem.PropertyChanged -= OnTabViewItemPropertyChanged;
+                _tabStripContent.Children.Remove(tabViewItem);
+            }
+            catch
+            {
+                BatchCommit();
+            }
         }
 
         void AddTabViewItem(TabViewItem tabViewItem, int index = -1)
@@ -643,15 +652,24 @@ namespace Xamarin.Forms.TabView
 
         void AddTabViewItemFromTemplateToTabStrip(object item, int index = -1)
         {
-            View view = !(TabViewItemDataTemplate is DataTemplateSelector tabItemDataTemplate) ?
-                (View)TabViewItemDataTemplate.CreateContent() :
-                (View)tabItemDataTemplate.SelectTemplate(item, this).CreateContent();
+            try
+            {
+                BatchBegin();
 
-            view.Parent = this;
-            view.BindingContext = item;
+                View view = !(TabViewItemDataTemplate is DataTemplateSelector tabItemDataTemplate) ?
+                    (View)TabViewItemDataTemplate.CreateContent() :
+                    (View)tabItemDataTemplate.SelectTemplate(item, this).CreateContent();
 
-            AddSelectionTapRecognizer(view);
-            AddTabViewItemToTabStrip(view, index);
+                view.Parent = this;
+                view.BindingContext = item;
+
+                AddSelectionTapRecognizer(view);
+                AddTabViewItemToTabStrip(view, index);
+            }
+            catch
+            {
+                BatchCommit();
+            }
         }
         
         void UpdateIsEnabled()
@@ -676,6 +694,17 @@ namespace Xamarin.Forms.TabView
         {
             // TODO: Hide / Show TabViewItem
             Console.WriteLine($"Update TabViewItem IsVisible: {tabViewItem.IsVisible}");
+
+            bool isTabStripVisible = false;
+
+            foreach (var tabItem in TabItems)
+                if (tabItem.IsVisible)
+                {
+                    isTabStripVisible = true;
+                    break;
+                }
+
+            UpdateIsTabStripVisible(isTabStripVisible);
         }
 
         void UpdateTabViewItemTabWidth(TabViewItem tabViewItem)

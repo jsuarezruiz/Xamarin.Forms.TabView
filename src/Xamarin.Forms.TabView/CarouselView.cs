@@ -389,9 +389,22 @@ namespace Xamarin.Forms.TabView
                 if (newSelectedIndex < 0 || newSelectedIndex >= _itemsCount)
                     newSelectedIndex = GetNewIndex(newSelectedIndex);
 
-                var backView = _currentView;
-                _currentView = _backView;
-                _backView = backView;
+                try
+                {
+                    BatchBegin();
+
+                    var backView = _currentView;
+
+                    _currentView = _backView;
+                    _backView = backView;
+
+                    _currentView.IsVisible = true;
+                    _backView.IsVisible = true;
+                }
+                finally
+                {
+                    BatchCommit();
+                }
 
                 Position = newSelectedIndex;
             }
@@ -511,8 +524,16 @@ namespace Xamarin.Forms.TabView
 
             if (view == null)
             {
-                view = (View)ItemTemplate.CreateContent();
-                view.BindingContext = context;
+                try
+                {
+                    BatchBegin();
+                    view = (View)ItemTemplate.CreateContent();
+                    view.BindingContext = context;
+                }
+                finally
+                {
+                    BatchCommit();
+                }
             }
 
             return view;
