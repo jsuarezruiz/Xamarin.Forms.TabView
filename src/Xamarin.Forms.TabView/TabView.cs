@@ -395,9 +395,7 @@ namespace Xamarin.Forms.TabView
             _tabStripContainer = new Grid
             {
                 BackgroundColor = Color.Transparent,
-                Children = { _tabStripBackground, _tabStripContainerScroll },
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.Start
+                Children = { _tabStripBackground, _tabStripContainerScroll }
             };
 
             _contentContainer = new CarouselView
@@ -580,11 +578,10 @@ namespace Xamarin.Forms.TabView
 
         void UpdateTabStripSize()
         {
-            if (_tabStripContainer.HeightRequest > 0)
-                return;
-
             var tabStripSize = _tabStripContent.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
-            _tabStripContainer.HeightRequest = tabStripSize.Request.Height;
+
+            if (_tabStripContainer.HeightRequest != tabStripSize.Request.Height)
+                _tabStripContainer.HeightRequest = tabStripSize.Request.Height;
         }
 
         void AddTabViewItemFromTemplate(object item, int index = -1)
