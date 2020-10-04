@@ -402,6 +402,7 @@ namespace Xamarin.Forms.TabView
 
             _contentContainer = new CarouselView
             {
+                BackgroundColor = Color.Transparent,
                 ItemsSource = TabItems,
                 ItemTemplate = new DataTemplate(() =>
                 {
@@ -411,7 +412,6 @@ namespace Xamarin.Forms.TabView
                 }),
                 IsSwipeEnabled = IsSwipeEnabled,
                 IsScrollAnimated = IsTabTransitionEnabled,
-                BackgroundColor = Color.Transparent,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
@@ -540,17 +540,8 @@ namespace Xamarin.Forms.TabView
 
         void ClearTabViewItem(TabViewItem tabViewItem)
         {
-            try
-            {
-                BatchBegin();
-
-                tabViewItem.PropertyChanged -= OnTabViewItemPropertyChanged;
-                _tabStripContent.Children.Remove(tabViewItem);
-            }
-            catch
-            {
-                BatchCommit();
-            }
+            tabViewItem.PropertyChanged -= OnTabViewItemPropertyChanged;
+            _tabStripContent.Children.Remove(tabViewItem);
         }
 
         void AddTabViewItem(TabViewItem tabViewItem, int index = -1)
@@ -665,24 +656,15 @@ namespace Xamarin.Forms.TabView
 
         void AddTabViewItemFromTemplateToTabStrip(object item, int index = -1)
         {
-            try
-            {
-                BatchBegin();
+            View view = !(TabViewItemDataTemplate is DataTemplateSelector tabItemDataTemplate) ?
+                (View)TabViewItemDataTemplate.CreateContent() :
+                (View)tabItemDataTemplate.SelectTemplate(item, this).CreateContent();
 
-                View view = !(TabViewItemDataTemplate is DataTemplateSelector tabItemDataTemplate) ?
-                    (View)TabViewItemDataTemplate.CreateContent() :
-                    (View)tabItemDataTemplate.SelectTemplate(item, this).CreateContent();
+            view.Parent = this;
+            view.BindingContext = item;
 
-                view.Parent = this;
-                view.BindingContext = item;
-
-                AddSelectionTapRecognizer(view);
-                AddTabViewItemToTabStrip(view, index);
-            }
-            catch
-            {
-                BatchCommit();
-            }
+            AddSelectionTapRecognizer(view);
+            AddTabViewItemToTabStrip(view, index);
         }
         
         void UpdateIsEnabled()
@@ -752,6 +734,7 @@ namespace Xamarin.Forms.TabView
                 AddTabViewItemFromTemplate(item);
             }
 
+            UpdateTabStripSize();
             UpdateSelectedIndex(0);
         }
 
