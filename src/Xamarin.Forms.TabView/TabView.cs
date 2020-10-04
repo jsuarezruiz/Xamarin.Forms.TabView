@@ -359,8 +359,8 @@ namespace Xamarin.Forms.TabView
 
             _tabStripIndicator = new Grid
             {
-                HeightRequest = TabIndicatorHeight,
                 BackgroundColor = TabIndicatorColor,
+                HeightRequest = TabIndicatorHeight,
                 HorizontalOptions = LayoutOptions.Start
             };
 
@@ -378,6 +378,8 @@ namespace Xamarin.Forms.TabView
             {
                 BackgroundColor = Color.Transparent,
                 Children = { _tabStripIndicator, _tabStripContent },
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.Start
             };
 
             _tabStripContainerScroll = new ScrollView()
@@ -580,7 +582,18 @@ namespace Xamarin.Forms.TabView
 
             AddTabViewItemToTabStrip(tabViewItem, index);
 
+            UpdateTabStripSize();
+
             UpdateSelectedIndex(0);
+        }
+
+        void UpdateTabStripSize()
+        {
+            if (_tabStripContainer.HeightRequest > 0)
+                return;
+
+            var tabStripSize = _tabStripContent.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+            _tabStripContainer.HeightRequest = tabStripSize.Request.Height;
         }
 
         void AddTabViewItemFromTemplate(object item, int index = -1)
