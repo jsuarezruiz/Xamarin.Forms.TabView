@@ -103,11 +103,25 @@
                 <Button
                     x:Name="TabStripBackgroundViewBtn"
                     Text="Animated TabStrip Gallery"
-                    Clicked="OnTabStripBackgroundViewBtnClicked"/>
+                    Clicked="OnTabStripBackgroundViewBtnClicked">
+                    <Button.IsVisible>
+                        <OnPlatform x:TypeArguments="x:Boolean">
+                            <On Platform="Android, iOS, UWP">True</On>
+                            <On Platform="macOS">False</On>
+                        </OnPlatform>
+                    </Button.IsVisible>
+                </Button>
                 <Button
                     x:Name="PerfBtn"
                     Text="Performance Test Gallery"
-                    Clicked="OnPerfBtnClicked"/>
+                    Clicked="OnPerfBtnClicked">
+                    <Button.IsVisible>
+                        <OnPlatform x:TypeArguments="x:Boolean">
+                            <On Platform="Android, iOS, UWP">True</On>
+                            <On Platform="macOS">False</On>
+                        </OnPlatform>
+                    </Button.IsVisible>
+                </Button>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

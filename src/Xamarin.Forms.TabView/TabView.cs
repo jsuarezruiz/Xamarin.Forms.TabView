@@ -392,6 +392,9 @@ namespace Xamarin.Forms.TabView
                 VerticalOptions = LayoutOptions.Start
             };
 
+            if (Device.RuntimePlatform == Device.macOS || Device.RuntimePlatform == Device.UWP)
+                _tabStripContainerScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Default;
+
             _tabStripContainer = new Grid
             {
                 BackgroundColor = Color.Transparent,
@@ -556,7 +559,7 @@ namespace Xamarin.Forms.TabView
             {
                 if (Device.RuntimePlatform == Device.Android)
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(MaterialTabViewItemTemplate));
-                else if (Device.RuntimePlatform == Device.iOS)
+                else if (Device.RuntimePlatform == Device.iOS || Device.RuntimePlatform == Device.macOS)
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(CupertinoTabViewItemTemplate));
                 else if (Device.RuntimePlatform == Device.UWP)
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(WindowsTabViewItemTemplate));
@@ -850,6 +853,9 @@ namespace Xamarin.Forms.TabView
         void UpdateTabStripBackgroundColor(Color tabStripBackgroundColor)
         {
             _tabStripBackground.BackgroundColor = tabStripBackgroundColor;
+
+            if (Device.RuntimePlatform == Device.macOS)
+                _tabStripContainerScroll.BackgroundColor = tabStripBackgroundColor;
         }
 
         void UpdateTabStripBackgroundView(View tabStripBackgroundView)
