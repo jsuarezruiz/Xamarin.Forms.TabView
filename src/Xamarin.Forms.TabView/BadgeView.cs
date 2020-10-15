@@ -120,6 +120,8 @@ namespace Xamarin.Forms.TabView
         {
             if (Device.RuntimePlatform == Device.Android)
                 return 60; 
+            else if (Device.RuntimePlatform == Device.macOS)
+                return 10;
             else if (Device.RuntimePlatform == Device.UWP)
                 return 24;
 

@@ -95,6 +95,42 @@
                             Text="TabContent6" />
                     </Grid>
                 </controls:TabViewItem>
+                 <controls:TabViewItem
+                    Icon="circle.png"
+                    Text="Tab 7"   
+                    Style="{StaticResource CustomTabViewItemStyle}">
+                    <Grid
+                        BackgroundColor="LightSeaGreen">
+                        <Label    
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="TabContent7" />
+                    </Grid>
+                </controls:TabViewItem>
+                <controls:TabViewItem
+                    Icon="square.png"
+                    Text="Tab 8"   
+                    Style="{StaticResource CustomTabViewItemStyle}">
+                    <Grid
+                        BackgroundColor="LightYellow">
+                        <Label    
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="TabContent8" />
+                    </Grid>
+                </controls:TabViewItem>
+                <controls:TabViewItem
+                    Icon="triangle.png"
+                    Text="Tab 9"
+                    Style="{StaticResource CustomTabViewItemStyle}">
+                    <Grid
+                        BackgroundColor="LimeGreen">
+                        <Label    
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Text="TabContent9" />
+                    </Grid>
+                </controls:TabViewItem>
             </controls:TabView>
         </Grid>
     </ContentPage.Content>

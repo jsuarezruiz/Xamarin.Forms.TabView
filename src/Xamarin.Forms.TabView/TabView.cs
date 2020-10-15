@@ -359,8 +359,8 @@ namespace Xamarin.Forms.TabView
 
             _tabStripIndicator = new Grid
             {
-                HeightRequest = TabIndicatorHeight,
                 BackgroundColor = TabIndicatorColor,
+                HeightRequest = TabIndicatorHeight,
                 HorizontalOptions = LayoutOptions.Start
             };
 
@@ -378,6 +378,8 @@ namespace Xamarin.Forms.TabView
             {
                 BackgroundColor = Color.Transparent,
                 Children = { _tabStripIndicator, _tabStripContent },
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.Start
             };
 
             _tabStripContainerScroll = new ScrollView()
@@ -390,16 +392,18 @@ namespace Xamarin.Forms.TabView
                 VerticalOptions = LayoutOptions.Start
             };
 
+            if (Device.RuntimePlatform == Device.macOS || Device.RuntimePlatform == Device.UWP)
+                _tabStripContainerScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Default;
+
             _tabStripContainer = new Grid
             {
                 BackgroundColor = Color.Transparent,
-                Children = { _tabStripBackground, _tabStripContainerScroll },
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.Start
+                Children = { _tabStripBackground, _tabStripContainerScroll }
             };
 
             _contentContainer = new CarouselView
             {
+                BackgroundColor = Color.Transparent,
                 ItemsSource = TabItems,
                 ItemTemplate = new DataTemplate(() =>
                 {
@@ -409,7 +413,6 @@ namespace Xamarin.Forms.TabView
                 }),
                 IsSwipeEnabled = IsSwipeEnabled,
                 IsScrollAnimated = IsTabTransitionEnabled,
-                BackgroundColor = Color.Transparent,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
@@ -556,7 +559,7 @@ namespace Xamarin.Forms.TabView
             {
                 if (Device.RuntimePlatform == Device.Android)
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(MaterialTabViewItemTemplate));
-                else if (Device.RuntimePlatform == Device.iOS)
+                else if (Device.RuntimePlatform == Device.iOS || Device.RuntimePlatform == Device.macOS)
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(CupertinoTabViewItemTemplate));
                 else if (Device.RuntimePlatform == Device.UWP)
                     tabViewItem.ControlTemplate = new ControlTemplate(typeof(WindowsTabViewItemTemplate));
@@ -571,7 +574,17 @@ namespace Xamarin.Forms.TabView
 
             AddTabViewItemToTabStrip(tabViewItem, index);
 
+            UpdateTabStripSize();
+
             UpdateSelectedIndex(0);
+        }
+
+        void UpdateTabStripSize()
+        {
+            var tabStripSize = _tabStripContent.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+
+            if (_tabStripContainer.HeightRequest != tabStripSize.Request.Height)
+                _tabStripContainer.HeightRequest = tabStripSize.Request.Height;
         }
 
         void AddTabViewItemFromTemplate(object item, int index = -1)
@@ -676,6 +689,17 @@ namespace Xamarin.Forms.TabView
         {
             // TODO: Hide / Show TabViewItem
             Console.WriteLine($"Update TabViewItem IsVisible: {tabViewItem.IsVisible}");
+
+            bool isTabStripVisible = false;
+
+            foreach (var tabItem in TabItems)
+                if (tabItem.IsVisible)
+                {
+                    isTabStripVisible = true;
+                    break;
+                }
+
+            UpdateIsTabStripVisible(isTabStripVisible);
         }
 
         void UpdateTabViewItemTabWidth(TabViewItem tabViewItem)
@@ -710,6 +734,7 @@ namespace Xamarin.Forms.TabView
                 AddTabViewItemFromTemplate(item);
             }
 
+            UpdateTabStripSize();
             UpdateSelectedIndex(0);
         }
 
@@ -828,6 +853,9 @@ namespace Xamarin.Forms.TabView
         void UpdateTabStripBackgroundColor(Color tabStripBackgroundColor)
         {
             _tabStripBackground.BackgroundColor = tabStripBackgroundColor;
+
+            if (Device.RuntimePlatform == Device.macOS)
+                _tabStripContainerScroll.BackgroundColor = tabStripBackgroundColor;
         }
 
         void UpdateTabStripBackgroundView(View tabStripBackgroundView)

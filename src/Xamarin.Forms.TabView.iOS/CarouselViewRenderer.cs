@@ -28,7 +28,7 @@ namespace Xamarin.Forms.TabView.iOS
 				DelaysTouchesEnded = false
 			};
 
-			_panGestureRecognizer.ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => true;
+			_panGestureRecognizer.ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => false;
 		}
 
 		public static void Preserve() => CarouselView.Preserve();

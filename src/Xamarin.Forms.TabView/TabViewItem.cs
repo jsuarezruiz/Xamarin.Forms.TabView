@@ -337,11 +337,14 @@ namespace Xamarin.Forms.TabView
 
         internal virtual void OnTabTapped(TabTappedEventArgs e)
         {
-            TabTappedEventHandler handler = TabTapped;
-            handler?.Invoke(this, e);
+            if (IsEnabled)
+            {
+                TabTappedEventHandler handler = TabTapped;
+                handler?.Invoke(this, e);
 
-            if (TapCommand != null)
-                TapCommand.Execute(null);
+                if (TapCommand != null)
+                    TapCommand.Execute(null);
+            }
         }
 
         internal void UpdateCurrentContent(bool isOnScreen = true)
