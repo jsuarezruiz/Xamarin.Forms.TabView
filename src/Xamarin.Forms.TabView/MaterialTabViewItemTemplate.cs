@@ -66,7 +66,7 @@ namespace Xamarin.Forms.TabView
             _text.SetBinding(Label.TextColorProperty, "CurrentTextColor");
             _text.SetBinding(Label.FontSizeProperty, "CurrentFontSize");
             _text.SetBinding(Label.FontAttributesProperty, "CurrentFontAttributes");
-
+            _text.SetBinding(Label.FontFamilyProperty, "CurrentFontFamily");
             _badge.SetBinding(BadgeView.BackgroundColorProperty, "CurrentBadgeBackgroundColor");
             _badge.SetBinding(BadgeView.TextProperty, "BadgeText");
             _badge.SetBinding(BadgeView.TextColorProperty, "BadgeTextColor");
