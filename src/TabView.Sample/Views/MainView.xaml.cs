@@ -85,6 +85,11 @@ namespace TabView.Sample.Views
             Navigation.PushAsync(new TabFlowDirectionGallery());
         }
 
+        void OnNoContentBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new NoContentGallery());
+        }
+
         void OnTabBadgeBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new TabBadgeGallery());

@@ -74,6 +74,10 @@
                     Text="Tab FlowDirection Gallery"
                     Clicked="OnTabFlowDirectionBtnClicked"/>
                 <Button
+                    x:Name="NoContentBtn"
+                    Text="No Content Gallery"
+                    Clicked="OnNoContentBtnClicked"/>
+                <Button
                     x:Name="TabBadgeBtn"
                     Text="Tab Badge Gallery"
                     Clicked="OnTabBadgeBtnClicked"/>

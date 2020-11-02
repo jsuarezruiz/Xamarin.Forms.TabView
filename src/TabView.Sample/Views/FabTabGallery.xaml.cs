@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using Xamarin.Forms;
+using Xamarin.Forms.TabView;
 
 namespace TabView.Sample.Views
 {
@@ -7,6 +9,11 @@ namespace TabView.Sample.Views
         public FabTabGallery()
         {
             InitializeComponent();
+        }
+
+        void OnFabTabTapped(object sender, TabTappedEventArgs e)
+        {
+            DisplayAlert("FabTabGallery", "Tab Tapped.", "Ok");
         }
     }
 }
