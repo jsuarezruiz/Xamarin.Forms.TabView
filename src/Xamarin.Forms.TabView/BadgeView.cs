@@ -180,7 +180,10 @@ namespace Xamarin.Forms.TabView
             if (PlacementTarget == null)
                 return;
 
-            var x = PlacementTarget.X + PlacementTarget.Width - PlacementTarget.Margin.HorizontalThickness;
+            var x = PlacementTarget.X - PlacementTarget.Margin.HorizontalThickness;
+
+            if (Device.RuntimePlatform != Device.Android)
+                x += PlacementTarget.Width;
 
             _badgeBorder.Margin = new Thickness(x, 0, 0, 0);
         }
