@@ -36,10 +36,8 @@ namespace Xamarin.Forms.TabView
 
             _badge = new BadgeView
             {
-                HeightRequest = 20,
-                WidthRequest = 20,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start
+                PlacementTarget = _icon,
+                Margin = new Thickness(0)
             };
 
             Children.Add(_icon);
