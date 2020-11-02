@@ -1,6 +1,5 @@
 ﻿using Foundation;
 using UIKit;
-using Xamarin.Forms.TabView.iOS;
 
 namespace TabView.Sample.iOS
 {
@@ -19,7 +18,6 @@ namespace TabView.Sample.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            CarouselViewRenderer.Preserve();
             Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
 

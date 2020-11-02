@@ -197,6 +197,26 @@ namespace Xamarin.Forms.TabView
             set { SetValue(BadgeBackgroundColorSelectedProperty, value); }
         }
 
+        public static readonly BindableProperty BadgeBorderColorProperty =
+           BindableProperty.Create(nameof(BadgeBorderColor), typeof(Color), typeof(TabViewItem), Color.Default,
+               propertyChanged: OnTabViewItemPropertyChanged);
+
+        public Color BadgeBorderColor
+        {
+            get => (Color)GetValue(BadgeBorderColorProperty);
+            set { SetValue(BadgeBorderColorProperty, value); }
+        }
+
+        public static readonly BindableProperty BadgeBorderColorSelectedProperty =
+            BindableProperty.Create(nameof(BadgeBorderColorSelected), typeof(Color), typeof(TabViewItem), Color.Default,
+                propertyChanged: OnTabViewItemPropertyChanged);
+
+        public Color BadgeBorderColorSelected
+        {
+            get => (Color)GetValue(BadgeBorderColorSelectedProperty);
+            set { SetValue(BadgeBorderColorSelectedProperty, value); }
+        }
+
         public static readonly BindableProperty TapCommandProperty =
            BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(TabViewItem), null);
 
@@ -307,6 +327,22 @@ namespace Xamarin.Forms.TabView
             }
         }
 
+        internal static readonly BindablePropertyKey CurrentBadgeBorderColorPropertyKey = BindableProperty.CreateReadOnly(nameof(CurrentBadgeBorderColor), typeof(Color), typeof(TabViewItem), Color.Default);
+
+        public static readonly BindableProperty CurrentBadgeBorderColorProperty = CurrentBadgeBorderColorPropertyKey.BindableProperty;
+
+        public Color CurrentBadgeBorderColor
+        {
+            get
+            {
+                return (Color)GetValue(CurrentBadgeBorderColorProperty);
+            }
+            private set
+            {
+                SetValue(CurrentBadgeBorderColorPropertyKey, value);
+            }
+        }
+
         internal static readonly BindablePropertyKey CurrentContentPropertyKey = BindableProperty.CreateReadOnly(nameof(CurrentContent), typeof(View), typeof(TabViewItem), null);
 
         public static readonly BindableProperty CurrentContentProperty = CurrentContentPropertyKey.BindableProperty;
@@ -364,6 +400,7 @@ namespace Xamarin.Forms.TabView
             CurrentFontFamily = !IsSelected || string.IsNullOrEmpty(FontFamilySelected) ? FontFamily : FontFamilySelected;
             CurrentFontAttributes = !IsSelected || FontAttributesSelected == FontAttributes.None ? FontAttributes : FontAttributesSelected;
             CurrentBadgeBackgroundColor = !IsSelected || BadgeBackgroundColorSelected == Color.Default ? BadgeBackgroundColor : BadgeBackgroundColorSelected;
+            CurrentBadgeBorderColor = !IsSelected || BadgeBorderColorSelected == Color.Default ? BadgeBorderColor : BadgeBorderColorSelected;
 
             UpdateCurrentContent();
         }

@@ -9,13 +9,6 @@
             <StackLayout
                 Padding="12">
                 <Label
-                    Text="CarouselView"
-                    FontSize="Large"/>
-                <Button
-                    x:Name="CarouselBtn"
-                    Text="CarouselView Gallery"
-                    Clicked="OnCarouselViewBtnClicked"/>
-                <Label
                     Text="TabView"
                     FontSize="Large"/>
                 <Button
@@ -34,18 +27,6 @@
                     x:Name="CustomTabsBtn"
                     Text="Custom Tabs Gallery"
                     Clicked="OnCustomTabsBtnClicked"/>
-                <Button
-                    x:Name="CyclicalTabsBtn"
-                    Text="Cyclical Tabs Gallery"
-                    Clicked="OnCyclicalTabsBtnClicked"/>
-                <Button
-                    x:Name="LazyTabsBtn"
-                    Text="Lazy Tabs Gallery"
-                    Clicked="OnLazyTabsBtnClicked"/>
-                <Button
-                    x:Name="CustomTransitionTabsBtn"
-                    Text="Custom Transition Tabs Gallery"
-                    Clicked="OnCustomTransitionTabsBtnClicked"/>
                 <Button
                     x:Name="TabViewItemAnimationBtn"
                     Text="TabViewItemAnimation Gallery"
@@ -86,7 +67,7 @@
                     x:Name="TabPlacementBtn"
                     Text="TabPlacement Gallery"
                     Clicked="OnTabPlacementBtnClicked"/>
-                <!-- Work in Progress -->
+                <!-- WORK IN PROGRESS-->
                 <Button
                     x:Name="TabFlowDirectionBtn"
                     IsVisible="False"
@@ -103,25 +84,11 @@
                 <Button
                     x:Name="TabStripBackgroundViewBtn"
                     Text="Animated TabStrip Gallery"
-                    Clicked="OnTabStripBackgroundViewBtnClicked">
-                    <Button.IsVisible>
-                        <OnPlatform x:TypeArguments="x:Boolean">
-                            <On Platform="Android, iOS, UWP">True</On>
-                            <On Platform="macOS">False</On>
-                        </OnPlatform>
-                    </Button.IsVisible>
-                </Button>
+                    Clicked="OnTabStripBackgroundViewBtnClicked" />
                 <Button
                     x:Name="PerfBtn"
                     Text="Performance Test Gallery"
-                    Clicked="OnPerfBtnClicked">
-                    <Button.IsVisible>
-                        <OnPlatform x:TypeArguments="x:Boolean">
-                            <On Platform="Android, iOS, UWP">True</On>
-                            <On Platform="macOS">False</On>
-                        </OnPlatform>
-                    </Button.IsVisible>
-                </Button>
+                    Clicked="OnPerfBtnClicked" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

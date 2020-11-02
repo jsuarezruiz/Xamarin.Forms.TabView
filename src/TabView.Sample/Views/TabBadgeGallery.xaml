@@ -45,6 +45,12 @@
                     Text="Tab 2"
                     TextColor="White"
                     TextColorSelected="Yellow"
+                    BadgeText="NEW"
+                    BadgeBackgroundColor="DarkOrange"
+                    BadgeBackgroundColorSelected="Red"
+                    BadgeBorderColor="Green"
+                    BadgeBorderColorSelected="LightGreen"
+                    BadgeTextColor="White"
                     FontSize="10"
                     FontAttributesSelected="12">
                     <Grid>
