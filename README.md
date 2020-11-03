@@ -43,7 +43,6 @@ Sounds good, but ... _why create this control?_.
 
 This control has been created with the idea of being able to customize absolutely everything in a simple way.
 - **Fully customized tabs**. You can customize the content of each tab, the tabstrip, the tab indicator or the tab content.
-- **Lazy loading** support.
 - Dynamic tabs.
 - Nested tabs in any way.
 - Gestures support.
@@ -58,7 +57,6 @@ This control has been created with the idea of being able to customize absolutel
 | TabItemsSource |  IEnumerable |
 | TabViewItemDataTemplate |  DataTemplate |
 | TabContentDataTemplate |  DataTemplate |
-| IsLazy |  Bool |
 | SelectedIndex |  Int |
 | TabStripPlacement |    TabStripPlacement   |
 | TabStripBackgroundColor | Color |
