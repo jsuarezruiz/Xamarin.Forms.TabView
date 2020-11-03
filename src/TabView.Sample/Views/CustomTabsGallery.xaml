@@ -58,7 +58,7 @@
 		        TargetType="controls:TabView">
                 <Setter
 			        Property="IsTabTransitionEnabled"
-			        Value="True" />
+			        Value="False" />
                 <Setter
 			        Property="TabStripBackgroundColor"
 			        Value="WhiteSmoke" />
