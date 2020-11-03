@@ -2,12 +2,17 @@
 {
     public class CupertinoTabViewItemTemplate : Grid
     {
+        readonly VisualFeedbackEffect _visualFeedback;
+
         readonly Image _icon;
         readonly Label _text;
         readonly BadgeView _badge;
 
         public CupertinoTabViewItemTemplate()
         {
+            _visualFeedback = new VisualFeedbackEffect();
+            Effects.Add(_visualFeedback);
+
             RowSpacing = 0;
 
             HorizontalOptions = LayoutOptions.FillAndExpand;
@@ -33,13 +38,8 @@
 
             _badge = new BadgeView
             {
-                HeightRequest = 24,
-                WidthRequest = 24,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start,
-                Scale = 0.75,
-                TranslationX = 12,
-                TranslationY = -2
+                PlacementTarget = _icon,
+                Margin = new Thickness(0)
             };
 
             Children.Add(_icon);
@@ -48,6 +48,8 @@
 
             SetRow(_icon, 0);
             SetRow(_text, 1);
+            SetRow(_badge, 0);
+            SetRowSpan(_badge, 2);
         }
 
         protected override void OnParentSet()
@@ -64,8 +66,11 @@
             _text.SetBinding(Label.FontAttributesProperty, "CurrentFontAttributes");
 
             _badge.SetBinding(BadgeView.BackgroundColorProperty, "CurrentBadgeBackgroundColor");
+            _badge.SetBinding(BadgeView.BorderColorProperty, "CurrentBadgeBorderColor");
             _badge.SetBinding(BadgeView.TextProperty, "BadgeText");
             _badge.SetBinding(BadgeView.TextColorProperty, "BadgeTextColor");
+
+            VisualFeedbackEffect.SetFeedbackColor(this, Color.White);
         }
     }
 }

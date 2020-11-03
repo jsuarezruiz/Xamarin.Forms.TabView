@@ -149,7 +149,8 @@
                 <controls:TabViewItem
                     Text="Tab 2"
                     ControlTemplate="{StaticResource FabTabItemTemplate}"
-                    Style="{StaticResource TabItemStyle}">
+                    Style="{StaticResource TabItemStyle}"
+                    TabTapped="OnFabTabTapped">
                     <controls:TabViewItem.Icon>
                         <FontImageSource
                             FontFamily="{DynamicResource MaterialFontFamily}"
@@ -157,13 +158,6 @@
                             Size="24"
                             Color="#FFFFFF" />
                     </controls:TabViewItem.Icon>
-                    <Grid 
-                        BackgroundColor="LightSkyBlue">
-                        <Label
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center"
-                            Text="TabContent2" />
-                    </Grid>
                 </controls:TabViewItem>
                 <controls:TabViewItem
                     Text="Tab 3"
