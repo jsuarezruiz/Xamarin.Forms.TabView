@@ -99,7 +99,7 @@ namespace Xamarin.Forms.TabView
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
-            
+
             _mainContainer = new Grid
             {
                 BackgroundColor = Color.Transparent,
@@ -348,7 +348,7 @@ namespace Xamarin.Forms.TabView
         static void OnTabIndicatorWidthChanged(BindableObject bindable, object oldValue, object newValue)
         {
             (bindable as TabView)?.UpdateTabIndicatorWidth((double)newValue);
-        } 
+        }
 
         public static readonly BindableProperty TabIndicatorViewProperty =
             BindableProperty.Create(nameof(TabIndicatorView), typeof(View), typeof(TabView), null,
@@ -472,7 +472,7 @@ namespace Xamarin.Forms.TabView
 
         void OnContentContainerPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(CarouselView.ItemsSource) ||
+            if (e.PropertyName == nameof(CarouselView.ItemsSource) ||
                e.PropertyName == nameof(CarouselView.VisibleViews))
             {
                 var items = _contentContainer.ItemsSource;
@@ -513,7 +513,7 @@ namespace Xamarin.Forms.TabView
         }
 
         void AddTabViewItem(TabViewItem tabViewItem, int index = -1)
-        {            
+        {
             tabViewItem.PropertyChanged -= OnTabViewItemPropertyChanged;
             tabViewItem.PropertyChanged += OnTabViewItemPropertyChanged;
 
@@ -601,7 +601,8 @@ namespace Xamarin.Forms.TabView
                     tabViewItem.OnTabTapped(tabTappedEventArgs);
                 }
 
-                UpdateSelectedIndex(capturedIndex);
+                if (CanUpdateSelectedIndex(capturedIndex))
+                    UpdateSelectedIndex(capturedIndex);
             };
 
             view.GestureRecognizers.Add(tapRecognizer);
@@ -756,6 +757,24 @@ namespace Xamarin.Forms.TabView
 
             for (int i = 0; i < tabItemsCount; i++)
                 _contentWidthCollection.Add(contentWidth * i);
+        }
+
+        bool CanUpdateSelectedIndex(int selectedIndex)
+        {
+            if (TabItems == null || TabItems.Count == 0)
+                return true;
+
+            var tabItem = TabItems[selectedIndex];
+
+            if (tabItem != null && tabItem.Content == null)
+            {
+                var itemsCount = TabItems.Count;
+                var contentItemsCount = TabItems.Count(t => t.Content == null);
+
+                return itemsCount == contentItemsCount;
+            }
+
+            return true;
         }
 
         void UpdateSelectedIndex(int position, bool hasCurrentItem = false)
@@ -948,7 +967,7 @@ namespace Xamarin.Forms.TabView
 
         void UpdateTabIndicatorPlacement(TabIndicatorPlacement tabIndicatorPlacement)
         {
-            switch(tabIndicatorPlacement)
+            switch (tabIndicatorPlacement)
             {
                 case TabIndicatorPlacement.Top:
                     _tabStripIndicator.VerticalOptions = LayoutOptions.Start;
@@ -1001,7 +1020,7 @@ namespace Xamarin.Forms.TabView
 
             if (_contentWidthCollection.Count == 0)
                 UpdateItemsSource(_contentContainer.ItemsSource);
-     
+
             var offset = args.HorizontalOffset;
             bool toRight = args.HorizontalDelta > 0;
 
@@ -1011,23 +1030,26 @@ namespace Xamarin.Forms.TabView
             if (previousIndex < 0 || nextIndex < 0)
                 return;
 
-            try
+            var itemsCount = TabItems.Count;
+
+            if (previousIndex > 0 && previousIndex < itemsCount)
             {
                 var currentTabViewItem = TabItems[previousIndex];
                 var currentTabViewItemWidth = currentTabViewItem.Width;
 
                 UpdateTabIndicatorWidth(currentTabViewItemWidth);
 
-                double progress = (offset - _contentWidthCollection[previousIndex]) / (_contentWidthCollection[nextIndex] - _contentWidthCollection[previousIndex]);
-                double position = toRight ? currentTabViewItem.X + (currentTabViewItemWidth * progress) : currentTabViewItem.X - (currentTabViewItemWidth * progress);
+                var contentItemsCount = _contentWidthCollection.Count;
 
-                _tabStripIndicator.TranslateTo(position, 0, TabIndicatorAnimationDuration, Easing.Linear);
+                if (previousIndex > 0 && previousIndex < contentItemsCount)
+                {
+                    double progress = (offset - _contentWidthCollection[previousIndex]) / (_contentWidthCollection[nextIndex] - _contentWidthCollection[previousIndex]);
+                    double position = toRight ? currentTabViewItem.X + (currentTabViewItemWidth * progress) : currentTabViewItem.X - (currentTabViewItemWidth * progress);
+
+                    _tabStripIndicator.TranslateTo(position, 0, TabIndicatorAnimationDuration, Easing.Linear);
+                }
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Cannot update the TabStripIndicator position.");
-            }
-        }
+        } 
 
         void UpdateTabIndicatorPosition(View currentTabViewItem)
         {

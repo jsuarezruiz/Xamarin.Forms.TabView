@@ -22,6 +22,7 @@ namespace Xamarin.Forms.TabView
             Label badgeText = new Label
             {
                 FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label)),
+                HorizontalTextAlignment = TextAlignment.Center,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center
             };
