@@ -31,6 +31,8 @@ namespace Xamarin.Forms.TabView
 
             _contentWidthCollection = new List<double>();
 
+            BatchBegin();
+
             _tabStripBackground = new Grid
             {
                 BackgroundColor = TabStripBackgroundColor,
@@ -120,6 +122,8 @@ namespace Xamarin.Forms.TabView
             Grid.SetRowSpan(_contentContainer, 2);
 
             Content = _mainContainer;
+
+            BatchCommit();
 
             UpdateIsEnabled();
             UpdateFlowDirection();
@@ -884,6 +888,8 @@ namespace Xamarin.Forms.TabView
 
         void UpdateTabContentLayout()
         {
+            BatchBegin();
+
             if (_tabStripContainer.IsVisible)
             {
                 if (TabStripPlacement == TabStripPlacement.Top)
@@ -902,6 +908,8 @@ namespace Xamarin.Forms.TabView
                 Grid.SetRow(_contentContainer, 0);
                 Grid.SetRowSpan(_contentContainer, 3);
             }
+
+            BatchCommit();
         }
 
         void UpdateTabStripBackgroundColor(Color tabStripBackgroundColor)

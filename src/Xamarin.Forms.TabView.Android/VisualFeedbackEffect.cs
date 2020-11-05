@@ -8,12 +8,13 @@ using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms.TabView.Android;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
+using XVisualFeedbackEffect = Xamarin.Forms.TabView.VisualFeedbackEffect;
 
 [assembly: ResolutionGroupName("TabView")]
-[assembly: ExportEffect(typeof(DroidVisualFeedbackEffect), "VisualFeedbackEffect")]
+[assembly: ExportEffect(typeof(VisualFeedbackEffect), nameof(VisualFeedbackEffect))]
 namespace Xamarin.Forms.TabView.Android
 {
-    public class DroidVisualFeedbackEffect : PlatformEffect
+    public class VisualFeedbackEffect : PlatformEffect
     {
         static readonly bool IsFastRenderers = Forms.Flags.Any(x => x == "FastRenderers_Experimental");
 
@@ -68,7 +69,7 @@ namespace Xamarin.Forms.TabView.Android
         {
             base.OnElementPropertyChanged(args);
 
-            if (args.PropertyName == VisualFeedbackEffect.FeedbackColorProperty.PropertyName)
+            if (args.PropertyName == XVisualFeedbackEffect.FeedbackColorProperty.PropertyName)
             {
                 UpdateEffectColor();
             }
@@ -76,7 +77,7 @@ namespace Xamarin.Forms.TabView.Android
 
         void UpdateEffectColor()
         {
-            var color = VisualFeedbackEffect.GetFeedbackColor(Element);
+            var color = XVisualFeedbackEffect.GetFeedbackColor(Element);
 
             var nativeColor = color.ToAndroid();
             nativeColor.A = 80;
@@ -164,9 +165,9 @@ namespace Xamarin.Forms.TabView.Android
         internal class FastRendererOnLayoutChangeListener : Java.Lang.Object, AView.IOnLayoutChangeListener
         {
             bool _hasParent = false;
-            DroidVisualFeedbackEffect _effect;
+            VisualFeedbackEffect _effect;
 
-            public FastRendererOnLayoutChangeListener(DroidVisualFeedbackEffect effect)
+            public FastRendererOnLayoutChangeListener(VisualFeedbackEffect effect)
             {
                 _effect = effect;
             }

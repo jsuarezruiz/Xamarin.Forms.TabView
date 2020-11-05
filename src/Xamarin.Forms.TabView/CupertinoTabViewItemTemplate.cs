@@ -72,5 +72,29 @@
 
             VisualFeedbackEffect.SetFeedbackColor(this, Color.White);
         }
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+
+            UpdateLayout();
+        }
+
+        void UpdateLayout()
+        {
+            if (!(BindingContext is TabViewItem tabViewItem))
+                return;
+
+            if (tabViewItem.CurrentIcon == null)
+            {
+                SetRow(_text, 0);
+                SetRowSpan(_text, 2);
+            }
+            else
+            {
+                SetRow(_text, 1);
+                SetRowSpan(_text, 1);
+            }
+        }
     }
 }

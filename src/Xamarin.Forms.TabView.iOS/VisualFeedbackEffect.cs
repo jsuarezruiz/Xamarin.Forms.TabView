@@ -3,13 +3,14 @@ using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms.TabView.iOS;
+using XVisualFeedbackEffect = Xamarin.Forms.TabView.VisualFeedbackEffect;
 
 [assembly: ResolutionGroupName("TabView")]
-[assembly: ExportEffect(typeof(IosVisualFeedbackEffect), "VisualFeedbackEffect")]
+[assembly: ExportEffect(typeof(VisualFeedbackEffect), nameof(VisualFeedbackEffect))]
 namespace Xamarin.Forms.TabView.iOS
 {
     [Foundation.Preserve(AllMembers = true)]
-    public class IosVisualFeedbackEffect : PlatformEffect
+    public class VisualFeedbackEffect : PlatformEffect
     {
         TouchEvents _touchEvents;
         TouchEventsGestureRecognizer _touchRecognizer;
@@ -79,7 +80,7 @@ namespace Xamarin.Forms.TabView.iOS
         {
             base.OnElementPropertyChanged(args);
 
-            if (args.PropertyName == VisualFeedbackEffect.FeedbackColorProperty.PropertyName)
+            if (args.PropertyName == XVisualFeedbackEffect.FeedbackColorProperty.PropertyName)
             {
                 UpdateEffectColor();
             }
@@ -87,7 +88,7 @@ namespace Xamarin.Forms.TabView.iOS
 
         void UpdateEffectColor()
         {
-            var color = VisualFeedbackEffect.GetFeedbackColor(Element);
+            var color = XVisualFeedbackEffect.GetFeedbackColor(Element);
             _alpha = color.A < 1.0f ? 1f : 0.8f;
             _layer.BackgroundColor = color.ToUIColor();
         }
