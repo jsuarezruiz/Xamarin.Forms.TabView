@@ -22,6 +22,7 @@ namespace Xamarin.Forms.TabView
         readonly Grid _tabStripContent;
         readonly Grid _tabStripContentContainer;
         readonly CarouselView _contentContainer;
+
         readonly List<double> _contentWidthCollection;
         ObservableCollection<TabViewItem> _contentTabItems;
 
@@ -101,6 +102,10 @@ namespace Xamarin.Forms.TabView
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
+
+            // Workaround to fix a Xamarin.Forms CarouselView issue that create a wrong 1px margin.
+            if (Device.RuntimePlatform == Device.iOS)
+                _contentContainer.Margin = new Thickness(-1, -1, 0, 0);
 
             _mainContainer = new Grid
             {
