@@ -40,6 +40,11 @@ namespace TabView.Sample.Views
             Navigation.PushAsync(new TabItemsSourceGallery());
         }
 
+        void OnUpdateTabItemsBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new UpdateTabItemsGallery());
+        }
+
         void OnTabViewItemAnimationBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new TabViewItemAnimationGallery());

@@ -36,6 +36,10 @@
                     Text="TabItemsSource Gallery"
                     Clicked="OnTabItemsSourceBtnClicked"/>
                 <Button
+                    x:Name="UpdateTabItemsBtn"
+                    Text="Update TabItems Gallery"
+                    Clicked="OnUpdateTabItemsBtnClicked"/>
+                <Button
                     x:Name="SegmentControlBtn"
                     Text="Segment Tabs Gallery"
                     Clicked="OnSegmentControlBtnClicked"/>

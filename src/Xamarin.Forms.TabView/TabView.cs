@@ -24,6 +24,7 @@ namespace Xamarin.Forms.TabView
         readonly CarouselView _contentContainer;
 
         readonly List<double> _contentWidthCollection;
+        IList _tabItemsSource;
         ObservableCollection<TabViewItem> _contentTabItems;
 
         public TabView()
@@ -142,13 +143,14 @@ namespace Xamarin.Forms.TabView
                 _contentContainer.Scrolled -= OnContentContainerScrolled;
             }
 
+            if (_tabItemsSource is INotifyCollectionChanged notifyTabItemsSource)
+                notifyTabItemsSource.CollectionChanged -= OnTabItemsSourceCollectionChanged;
+
             if (TabItems != null)
                 TabItems.CollectionChanged -= OnTabItemsCollectionChanged;
         }
 
         public ObservableCollection<TabViewItem> TabItems { get; set; }
-
-        // TODO: Include HasTabStripShadow, etc.
 
         public static readonly BindableProperty TabItemsSourceProperty =
             BindableProperty.Create(nameof(TabItemsSource), typeof(IList), typeof(TabView), null,
@@ -162,7 +164,6 @@ namespace Xamarin.Forms.TabView
 
         static void OnTabItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            // TODO: If ItemsSource implements INotifyCollectionChanged, detect changes in the collection and update the TabView.
             (bindable as TabView)?.UpdateTabItemsSource();
         }
 
@@ -513,6 +514,9 @@ namespace Xamarin.Forms.TabView
 
             if (_tabStripContent.Children.Count > 0)
                 _tabStripContent.Children.Clear();
+
+            bool hasItems = TabItems.Count > 0 || TabItemsSource.Count > 0;
+            _tabStripContainer.IsVisible = hasItems;
         }
 
         void ClearTabViewItem(TabViewItem tabViewItem)
@@ -740,6 +744,14 @@ namespace Xamarin.Forms.TabView
             if (TabItemsSource == null || TabViewItemDataTemplate == null)
                 return;
 
+            if (_tabItemsSource is INotifyCollectionChanged oldnNotifyTabItemsSource)
+                oldnNotifyTabItemsSource.CollectionChanged -= OnTabItemsSourceCollectionChanged;
+            
+            _tabItemsSource = TabItemsSource;
+
+            if (_tabItemsSource is INotifyCollectionChanged newNotifyTabItemsSource)
+                newNotifyTabItemsSource.CollectionChanged += OnTabItemsSourceCollectionChanged;
+            
             ClearTabStrip();
 
             _contentContainer.ItemTemplate = TabContentDataTemplate;
@@ -752,6 +764,11 @@ namespace Xamarin.Forms.TabView
             UpdateTabStripSize();
 
             UpdateSelectedIndex(0);
+        }
+
+        void OnTabItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateTabItemsSource();
         }
 
         void UpdateItemsSource(IEnumerable items)
@@ -839,7 +856,8 @@ namespace Xamarin.Forms.TabView
                 if (contentIndex >= 0)
                     _contentContainer.Position = contentIndex;
 
-                await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[tabStripIndex], ScrollToPosition.MakeVisible, false);
+                if (_tabStripContent.Children.Count > 0)
+                    await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[tabStripIndex], ScrollToPosition.MakeVisible, false);
             });
 
             if (newPosition != oldPosition)
@@ -1007,7 +1025,7 @@ namespace Xamarin.Forms.TabView
 
         void UpdateTabIndicatorPosition(int tabViewItemIndex)
         {
-            if (_tabStripContent == null || tabViewItemIndex == -1)
+            if (_tabStripContent == null || _tabStripContent.Children.Count == 0 || tabViewItemIndex == -1)
                 return;
 
             var currentTabViewItem = _tabStripContent.Children[tabViewItemIndex];
