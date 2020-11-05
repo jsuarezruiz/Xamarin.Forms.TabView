@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 using TabView.Sample.Models;
 using Xamarin.Forms;
 
@@ -12,6 +13,10 @@ namespace TabView.Sample.ViewModels
         }
 
         public ObservableCollection<Monkey> Monkeys { get; set; }
+
+        public ICommand ClearDataCommand => new Command(ClearData);
+
+        public ICommand UpdateDataCommand => new Command(UpdateData);
 
         void LoadMonkeys()
         {
@@ -107,6 +112,36 @@ namespace TabView.Sample.ViewModels
                     Color = Color.Pink
                 }
             };
+        }
+
+        void ClearData()
+        {
+            Monkeys.Clear();
+        }
+
+        void UpdateData()
+        {
+            Monkeys.Clear();
+
+            Monkeys.Add(new Monkey
+            {
+                Index = "0",
+                Name = "Howler Monkey",
+                Location = "South America",
+                Details = "Howler monkeys are among the largest of the New World monkeys. Fifteen species are currently recognised. Previously classified in the family Cebidae, they are now placed in the family Atelidae.",
+                Image = "http://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Alouatta_guariba.jpg/200px-Alouatta_guariba.jpg",
+                Color = Color.Aqua
+            });
+
+            Monkeys.Add(new Monkey
+            {
+                Index = "1",
+                Name = "Japanese Macaque",
+                Location = "Japan",
+                Details = "The Japanese macaque, is a terrestrial Old World monkey species native to Japan. They are also sometimes known as the snow monkey because they live in areas where snow covers the ground for months each",
+                Image = "http://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Macaca_fuscata_fuscata1.jpg/220px-Macaca_fuscata_fuscata1.jpg",
+                Color = Color.OrangeRed
+            });
         }
     }
 }
