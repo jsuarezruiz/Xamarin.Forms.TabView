@@ -10,11 +10,6 @@ namespace TabView.Sample.Views
             InitializeComponent();
         }
 
-        void OnCarouselViewBtnClicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new CarouselViewGallery());
-        }
-
         void OnFabTabBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new FabTabGallery());
@@ -40,24 +35,14 @@ namespace TabView.Sample.Views
             Navigation.PushAsync(new CustomTabsGallery());
         }
 
-        void OnCyclicalTabsBtnClicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new CyclicalTabsGallery());
-        }
-
-        void OnLazyTabsBtnClicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new LazyLoadingTabsGallery());
-        }
-
         void OnTabItemsSourceBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new TabItemsSourceGallery());
         }
 
-        void OnCustomTransitionTabsBtnClicked(object sender, EventArgs e)
+        void OnUpdateTabItemsBtnClicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new CustomTransitionTabsGallery());
+            Navigation.PushAsync(new UpdateTabItemsGallery());
         }
 
         void OnTabViewItemAnimationBtnClicked(object sender, EventArgs e)
@@ -103,6 +88,11 @@ namespace TabView.Sample.Views
         void OnTabFlowDirectionBtnClicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(new TabFlowDirectionGallery());
+        }
+
+        void OnNoContentBtnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new NoContentGallery());
         }
 
         void OnTabBadgeBtnClicked(object sender, EventArgs e)

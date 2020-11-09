@@ -2,9 +2,9 @@
 
 namespace TabView.Sample.Views
 {
-    public partial class CyclicalTabsGallery : ContentPage
+    public partial class UpdateTabItemsGallery : ContentPage
     {
-        public CyclicalTabsGallery()
+        public UpdateTabItemsGallery()
         {
             InitializeComponent();
         }

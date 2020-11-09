@@ -1,34 +1,156 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Xamarin.Forms.TabView
 {
     [ContentProperty(nameof(TabItems))]
-    public class TabView : ContentView
+    public class TabView : ContentView, IDisposable
     {
         const uint TabIndicatorAnimationDuration = 100;
 
-        Grid _mainContainer;
-        Grid _tabStripContainer;
-        Grid _tabStripBackground;
-        ScrollView _tabStripContainerScroll;
-        Grid _tabStripIndicator;
-        Grid _tabStripContent;
-        Grid _tabStripContentContainer;
-        CarouselView _contentContainer;
+        readonly Grid _mainContainer;
+        readonly Grid _tabStripContainer;
+        readonly Grid _tabStripBackground;
+        readonly ScrollView _tabStripContainerScroll;
+        readonly Grid _tabStripIndicator;
+        readonly Grid _tabStripContent;
+        readonly Grid _tabStripContentContainer;
+        readonly CarouselView _contentContainer;
+
+        readonly List<double> _contentWidthCollection;
+        IList _tabItemsSource;
+        ObservableCollection<TabViewItem> _contentTabItems;
 
         public TabView()
         {
-            Initialize();
+            TabItems = new ObservableCollection<TabViewItem>();
+
+            _contentWidthCollection = new List<double>();
+
+            BatchBegin();
+
+            _tabStripBackground = new Grid
+            {
+                BackgroundColor = TabStripBackgroundColor,
+                HeightRequest = TabStripHeight,
+                VerticalOptions = LayoutOptions.Start
+            };
+
+            _tabStripIndicator = new Grid
+            {
+                BackgroundColor = TabIndicatorColor,
+                HeightRequest = TabIndicatorHeight,
+                HorizontalOptions = LayoutOptions.Start
+            };
+
+            UpdateTabIndicatorPlacement(TabIndicatorPlacement);
+
+            _tabStripContent = new Grid
+            {
+                BackgroundColor = Color.Transparent,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.Start,
+                ColumnSpacing = 0
+            };
+
+            _tabStripContentContainer = new Grid
+            {
+                BackgroundColor = Color.Transparent,
+                Children = { _tabStripIndicator, _tabStripContent },
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.Start
+            };
+
+            _tabStripContainerScroll = new ScrollView()
+            {
+                BackgroundColor = Color.Transparent,
+                Orientation = ScrollOrientation.Horizontal,
+                Content = _tabStripContentContainer,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.Start
+            };
+
+            if (Device.RuntimePlatform == Device.macOS || Device.RuntimePlatform == Device.UWP)
+                _tabStripContainerScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Default;
+
+            _tabStripContainer = new Grid
+            {
+                BackgroundColor = Color.Transparent,
+                Children = { _tabStripBackground, _tabStripContainerScroll }
+            };
+
+            _contentContainer = new CarouselView
+            {
+                BackgroundColor = Color.Transparent,
+                ItemsSource = TabItems.Where(t => t.Content != null),
+                ItemTemplate = new DataTemplate(() =>
+                {
+                    var tabViewItemContent = new ContentView();
+                    tabViewItemContent.SetBinding(ContentProperty, "CurrentContent");
+                    return tabViewItemContent;
+                }),
+                IsSwipeEnabled = IsSwipeEnabled,
+                IsScrollAnimated = IsTabTransitionEnabled,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Never,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
+
+            // Workaround to fix a Xamarin.Forms CarouselView issue that create a wrong 1px margin.
+            if (Device.RuntimePlatform == Device.iOS)
+                _contentContainer.Margin = new Thickness(-1, -1, 0, 0);
+
+            _mainContainer = new Grid
+            {
+                BackgroundColor = Color.Transparent,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Children = { _contentContainer, _tabStripContainer },
+                RowSpacing = 0
+            };
+
+            _mainContainer.RowDefinitions.Add(new RowDefinition { Height = TabStripHeight > 0 ? TabStripHeight : GridLength.Auto });
+            _mainContainer.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            _mainContainer.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+
+            Grid.SetRow(_tabStripContainer, 0);
+            Grid.SetRowSpan(_tabStripContainer, 2);
+
+            Grid.SetRow(_contentContainer, 1);
+            Grid.SetRowSpan(_contentContainer, 2);
+
+            Content = _mainContainer;
+
+            BatchCommit();
+
+            UpdateIsEnabled();
+            UpdateFlowDirection();
+        }
+
+        public void Dispose()
+        {
+            if (_contentContainer != null)
+            {
+                _contentContainer.PropertyChanged -= OnContentContainerPropertyChanged;
+                _contentContainer.Scrolled -= OnContentContainerScrolled;
+            }
+
+            if (_tabItemsSource is INotifyCollectionChanged notifyTabItemsSource)
+                notifyTabItemsSource.CollectionChanged -= OnTabItemsSourceCollectionChanged;
+
+            if (TabItems != null)
+                TabItems.CollectionChanged -= OnTabItemsCollectionChanged;
         }
 
         public ObservableCollection<TabViewItem> TabItems { get; set; }
-
-        // TODO: Include HasTabStripShadow, etc.
 
         public static readonly BindableProperty TabItemsSourceProperty =
             BindableProperty.Create(nameof(TabItemsSource), typeof(IList), typeof(TabView), null,
@@ -42,7 +164,6 @@ namespace Xamarin.Forms.TabView
 
         static void OnTabItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            // TODO: If ItemsSource implements INotifyCollectionChanged, detect changes in the collection and update the TabView.
             (bindable as TabView)?.UpdateTabItemsSource();
         }
 
@@ -62,30 +183,6 @@ namespace Xamarin.Forms.TabView
         {
             get => (DataTemplate)GetValue(TabContentDataTemplateProperty);
             set { SetValue(TabContentDataTemplateProperty, value); }
-        }
-
-        public static readonly BindableProperty IsCyclicalProperty =
-          BindableProperty.Create(nameof(IsCyclical), typeof(bool), typeof(TabView), true,
-              propertyChanged: OnIsCyclicalChanged);
-
-        public bool IsCyclical
-        {
-            get => (bool)GetValue(IsCyclicalProperty);
-            set { SetValue(IsCyclicalProperty, value); }
-        }
-
-        static void OnIsCyclicalChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            (bindable as TabView)?.UpdateIsCyclical();
-        }
-
-        public static readonly BindableProperty IsLazyProperty =
-            BindableProperty.Create(nameof(IsLazy), typeof(bool), typeof(TabView), true);
-
-        public bool IsLazy
-        {
-            get => (bool)GetValue(IsLazyProperty);
-            set { SetValue(IsLazyProperty, value); }
         }
 
         public static readonly BindableProperty SelectedIndexProperty =
@@ -261,7 +358,7 @@ namespace Xamarin.Forms.TabView
         static void OnTabIndicatorWidthChanged(BindableObject bindable, object oldValue, object newValue)
         {
             (bindable as TabView)?.UpdateTabIndicatorWidth((double)newValue);
-        } 
+        }
 
         public static readonly BindableProperty TabIndicatorViewProperty =
             BindableProperty.Create(nameof(TabIndicatorView), typeof(View), typeof(TabView), null,
@@ -308,21 +405,6 @@ namespace Xamarin.Forms.TabView
             (bindable as TabView)?.UpdateIsTabTransitionEnabled((bool)newValue);
         }
 
-        public static readonly BindableProperty TabTransitionProperty =
-          BindableProperty.Create(nameof(TabTransition), typeof(IItemTransition), typeof(TabView), new ItemTransition(),
-              propertyChanged: OnTabViewItemTransitionChanged);
-
-        public IItemTransition TabTransition
-        {
-            get => (IItemTransition)GetValue(TabTransitionProperty);
-            set { SetValue(TabTransitionProperty, value); }
-        }
-
-        static void OnTabViewItemTransitionChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            (bindable as TabView)?.UpdateTabTransition((IItemTransition)newValue);
-        }
-
         public static readonly BindableProperty IsSwipeEnabledProperty =
             BindableProperty.Create(nameof(IsSwipeEnabled), typeof(bool), typeof(TabView), true,
                propertyChanged: OnIsSwipeEnabledChanged);
@@ -342,112 +424,9 @@ namespace Xamarin.Forms.TabView
 
         public event TabSelectionChangedEventHandler SelectionChanged;
 
-        public delegate void TabViewScrolledEventHandler(object sender, ScrolledEventArgs e);
+        public delegate void TabViewScrolledEventHandler(object sender, ItemsViewScrolledEventArgs e);
 
         public event TabViewScrolledEventHandler Scrolled;
-
-        void Initialize()
-        {
-            TabItems = new ObservableCollection<TabViewItem>();
-
-            _tabStripBackground = new Grid
-            {
-                BackgroundColor = TabStripBackgroundColor,
-                HeightRequest = TabStripHeight,
-                VerticalOptions = LayoutOptions.Start
-            };
-
-            _tabStripIndicator = new Grid
-            {
-                BackgroundColor = TabIndicatorColor,
-                HeightRequest = TabIndicatorHeight,
-                HorizontalOptions = LayoutOptions.Start
-            };
-
-            UpdateTabIndicatorPlacement(TabIndicatorPlacement);
-
-            _tabStripContent = new Grid
-            {
-                BackgroundColor = Color.Transparent,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.Start,
-                ColumnSpacing = 0
-            };
-
-            _tabStripContentContainer = new Grid
-            {
-                BackgroundColor = Color.Transparent,
-                Children = { _tabStripIndicator, _tabStripContent },
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.Start
-            };
-
-            _tabStripContainerScroll = new ScrollView()
-            {
-                BackgroundColor = Color.Transparent,
-                Orientation = ScrollOrientation.Horizontal,
-                Content = _tabStripContentContainer,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.Start
-            };
-
-            if (Device.RuntimePlatform == Device.macOS || Device.RuntimePlatform == Device.UWP)
-                _tabStripContainerScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Default;
-
-            _tabStripContainer = new Grid
-            {
-                BackgroundColor = Color.Transparent,
-                Children = { _tabStripBackground, _tabStripContainerScroll }
-            };
-
-            _contentContainer = new CarouselView
-            {
-                BackgroundColor = Color.Transparent,
-                ItemsSource = TabItems,
-                ItemTemplate = new DataTemplate(() =>
-                {
-                    var tabViewItemContent = new ContentView();
-                    tabViewItemContent.SetBinding(ContentProperty, "CurrentContent");
-                    return tabViewItemContent;
-                }),
-                IsSwipeEnabled = IsSwipeEnabled,
-                IsScrollAnimated = IsTabTransitionEnabled,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand
-            };
-
-            // TODO: Unsubscribe CarouselView events
-            _contentContainer.PropertyChanged += OnContentContainerPropertyChanged;
-            _contentContainer.Scrolled += OnContentContainerScrolled;
-
-            _mainContainer = new Grid
-            {
-                BackgroundColor = Color.Transparent,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { _contentContainer, _tabStripContainer },
-                RowSpacing = 0
-            };
-
-            _mainContainer.RowDefinitions.Add(new RowDefinition { Height = TabStripHeight > 0 ? TabStripHeight : GridLength.Auto });
-            _mainContainer.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            _mainContainer.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-
-            Grid.SetRow(_tabStripContainer, 0);
-            Grid.SetRowSpan(_tabStripContainer, 2);
-
-            Grid.SetRow(_contentContainer, 1);
-            Grid.SetRowSpan(_contentContainer, 2);
-
-            Content = _mainContainer;
-
-            // TODO: Unsubscribe CollectionChanged event
-            TabItems.CollectionChanged += OnTabItemsCollectionChanged;
-
-            UpdateIsEnabled();
-            UpdateFlowDirection();
-        }
 
         protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -503,29 +482,27 @@ namespace Xamarin.Forms.TabView
 
         void OnContentContainerPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(CarouselView.Position))
+            if (e.PropertyName == nameof(CarouselView.ItemsSource) ||
+               e.PropertyName == nameof(CarouselView.VisibleViews))
+            {
+                var items = _contentContainer.ItemsSource;
+
+                UpdateItemsSource(items);
+            }
+            else if (e.PropertyName == nameof(CarouselView.Position))
             {
                 var selectedIndex = _contentContainer.Position;
 
-                UpdateSelectedIndex(selectedIndex);
+                UpdateSelectedIndex(selectedIndex, true);
             }
         }
 
-        void OnContentContainerScrolled(object sender, ScrolledEventArgs args)
+        void OnContentContainerScrolled(object sender, ItemsViewScrolledEventArgs args)
         {
             for (int i = 0; i < TabItems.Count; i++)
-            {
-                if (IsLazy)
-                {
-                    bool isOnScreen = i == args.FirstVisibleItemIndex || i == args.CenterItemIndex || i == args.LastVisibleItemIndex;
-                    TabItems[i].UpdateCurrentContent(isOnScreen);
-                }
-                else
-                    TabItems[i].UpdateCurrentContent();
-            }
+                TabItems[i].UpdateCurrentContent();
 
-            double offset = args.Offset;
-            UpdateTabIndicatorPosition(offset);
+            UpdateTabIndicatorPosition(args);
 
             OnTabViewScrolled(args);
         }
@@ -537,6 +514,9 @@ namespace Xamarin.Forms.TabView
 
             if (_tabStripContent.Children.Count > 0)
                 _tabStripContent.Children.Clear();
+
+            bool hasItems = TabItems.Count > 0 || TabItemsSource.Count > 0;
+            _tabStripContainer.IsVisible = hasItems;
         }
 
         void ClearTabViewItem(TabViewItem tabViewItem)
@@ -547,11 +527,6 @@ namespace Xamarin.Forms.TabView
 
         void AddTabViewItem(TabViewItem tabViewItem, int index = -1)
         {
-            if (tabViewItem.Content == null)
-            {
-                throw new ArgumentException("The TabViewItem must have the Content property set.");
-            }
-
             tabViewItem.PropertyChanged -= OnTabViewItemPropertyChanged;
             tabViewItem.PropertyChanged += OnTabViewItemPropertyChanged;
 
@@ -574,6 +549,7 @@ namespace Xamarin.Forms.TabView
 
             AddTabViewItemToTabStrip(tabViewItem, index);
 
+            UpdateTabContentSize();
             UpdateTabStripSize();
 
             UpdateSelectedIndex(0);
@@ -585,6 +561,26 @@ namespace Xamarin.Forms.TabView
 
             if (_tabStripContainer.HeightRequest != tabStripSize.Request.Height)
                 _tabStripContainer.HeightRequest = tabStripSize.Request.Height;
+        }
+
+        void UpdateTabContentSize()
+        {
+            var items = _contentContainer.ItemsSource;
+
+            int count = 0;
+
+            var enumerator = items.GetEnumerator();
+
+            while (enumerator.MoveNext())
+                count++;
+
+            BatchBegin();
+
+            VerticalOptions = count != 0 ? LayoutOptions.FillAndExpand : LayoutOptions.Start;
+            _mainContainer.HeightRequest = count != 0 ? (TabContentHeight + TabStripHeight) : TabStripHeight;
+            UpdateTabContentHeight(count != 0 ? TabContentHeight : 0);
+
+            BatchCommit();
         }
 
         void AddTabViewItemFromTemplate(object item, int index = -1)
@@ -618,7 +614,8 @@ namespace Xamarin.Forms.TabView
                     tabViewItem.OnTabTapped(tabTappedEventArgs);
                 }
 
-                UpdateSelectedIndex(capturedIndex);
+                if (CanUpdateSelectedIndex(capturedIndex))
+                    UpdateSelectedIndex(capturedIndex);
             };
 
             view.GestureRecognizers.Add(tapRecognizer);
@@ -652,6 +649,8 @@ namespace Xamarin.Forms.TabView
                 int count = _tabStripContent.Children.Count - 1;
                 item.SetValue(Grid.ColumnProperty, count);
             }
+
+            UpdateTabViewItemTabWidth(item as TabViewItem);
         }
 
         void AddTabViewItemFromTemplateToTabStrip(object item, int index = -1)
@@ -660,15 +659,31 @@ namespace Xamarin.Forms.TabView
                 (View)TabViewItemDataTemplate.CreateContent() :
                 (View)tabItemDataTemplate.SelectTemplate(item, this).CreateContent();
 
-            view.Parent = this;
             view.BindingContext = item;
+
+            view.Effects.Add(new VisualFeedbackEffect());
 
             AddSelectionTapRecognizer(view);
             AddTabViewItemToTabStrip(view, index);
         }
-        
+
         void UpdateIsEnabled()
         {
+            if (IsEnabled)
+            {
+                _contentContainer.PropertyChanged += OnContentContainerPropertyChanged;
+                _contentContainer.Scrolled += OnContentContainerScrolled;
+
+                TabItems.CollectionChanged += OnTabItemsCollectionChanged;
+            }
+            else
+            {
+                _contentContainer.PropertyChanged -= OnContentContainerPropertyChanged;
+                _contentContainer.Scrolled -= OnContentContainerScrolled;
+
+                TabItems.CollectionChanged -= OnTabItemsCollectionChanged;
+            }
+
             _tabStripContent.IsEnabled = IsEnabled;
             _contentContainer.IsEnabled = IsEnabled;
         }
@@ -693,17 +708,22 @@ namespace Xamarin.Forms.TabView
             bool isTabStripVisible = false;
 
             foreach (var tabItem in TabItems)
+            {
                 if (tabItem.IsVisible)
                 {
                     isTabStripVisible = true;
                     break;
                 }
+            }
 
             UpdateIsTabStripVisible(isTabStripVisible);
         }
 
         void UpdateTabViewItemTabWidth(TabViewItem tabViewItem)
         {
+            if (tabViewItem == null)
+                return;
+
             var index = _tabStripContent.Children.IndexOf(tabViewItem);
             var colummns = _tabStripContent.ColumnDefinitions;
 
@@ -724,26 +744,66 @@ namespace Xamarin.Forms.TabView
             if (TabItemsSource == null || TabViewItemDataTemplate == null)
                 return;
 
+            if (_tabItemsSource is INotifyCollectionChanged oldnNotifyTabItemsSource)
+                oldnNotifyTabItemsSource.CollectionChanged -= OnTabItemsSourceCollectionChanged;
+            
+            _tabItemsSource = TabItemsSource;
+
+            if (_tabItemsSource is INotifyCollectionChanged newNotifyTabItemsSource)
+                newNotifyTabItemsSource.CollectionChanged += OnTabItemsSourceCollectionChanged;
+            
             ClearTabStrip();
 
             _contentContainer.ItemTemplate = TabContentDataTemplate;
             _contentContainer.ItemsSource = TabItemsSource;
 
             foreach (object item in TabItemsSource)
-            {
                 AddTabViewItemFromTemplate(item);
-            }
 
+            UpdateTabContentSize();
             UpdateTabStripSize();
+
             UpdateSelectedIndex(0);
         }
 
-        void UpdateIsCyclical()
+        void OnTabItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            _contentContainer.IsCyclical = IsCyclical;
+            UpdateTabItemsSource();
         }
 
-        void UpdateSelectedIndex(int position)
+        void UpdateItemsSource(IEnumerable items)
+        {
+            _contentWidthCollection.Clear();
+
+            if (_contentContainer.VisibleViews.Count == 0)
+                return;
+
+            double contentWidth = _contentContainer.VisibleViews.FirstOrDefault().Width;
+            int tabItemsCount = items.Cast<object>().Count();
+
+            for (int i = 0; i < tabItemsCount; i++)
+                _contentWidthCollection.Add(contentWidth * i);
+        }
+
+        bool CanUpdateSelectedIndex(int selectedIndex)
+        {
+            if (TabItems == null || TabItems.Count == 0)
+                return true;
+
+            var tabItem = TabItems[selectedIndex];
+
+            if (tabItem != null && tabItem.Content == null)
+            {
+                var itemsCount = TabItems.Count;
+                var contentItemsCount = TabItems.Count(t => t.Content == null);
+
+                return itemsCount == contentItemsCount;
+            }
+
+            return true;
+        }
+
+        void UpdateSelectedIndex(int position, bool hasCurrentItem = false)
         {
             if (position < 0)
                 return;
@@ -758,26 +818,47 @@ namespace Xamarin.Forms.TabView
 
             Device.BeginInvokeOnMainThread(async () =>
             {
-                await _contentContainer.ScrollToAsync(SelectedIndex);
-                await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[position], ScrollToPosition.MakeVisible, false);
-            });
+                if (_contentTabItems == null)
+                    _contentTabItems = new ObservableCollection<TabViewItem>(TabItems.Where(t => t.Content != null));
 
-            if (TabItems.Count > 0)
-            {
-                for (int index = 0; index < TabItems.Count; index++)
+                int contentIndex = position;
+                int tabStripIndex = position;
+
+                if (TabItems.Count > 0)
                 {
-                    if (index == position)
-                        TabItems[position].IsSelected = true;
-                    else
-                        TabItems[index].IsSelected = false;
-                }
+                    TabViewItem currentItem = null;
 
-                var currentTabItem = TabItems[position];
-                currentTabItem.SizeChanged += OnCurrentTabItemSizeChanged;
-                UpdateTabIndicatorPosition(currentTabItem);
-            }
-            else
-                UpdateTabIndicatorPosition(position);
+                    if (hasCurrentItem)
+                        currentItem = (TabViewItem)_contentContainer.CurrentItem;
+
+                    var tabViewItem = TabItems[SelectedIndex];
+
+                    contentIndex = _contentTabItems.IndexOf(currentItem ?? tabViewItem);
+                    tabStripIndex = TabItems.IndexOf(currentItem ?? tabViewItem);
+
+                    position = SelectedIndex = tabStripIndex;
+
+                    for (int index = 0; index < TabItems.Count; index++)
+                    {
+                        if (index == position)
+                            TabItems[position].IsSelected = true;
+                        else
+                            TabItems[index].IsSelected = false;
+                    }
+
+                    var currentTabItem = TabItems[position];
+                    currentTabItem.SizeChanged += OnCurrentTabItemSizeChanged;
+                    UpdateTabIndicatorPosition(currentTabItem);
+                }
+                else
+                    UpdateTabIndicatorPosition(position);
+
+                if (contentIndex >= 0)
+                    _contentContainer.Position = contentIndex;
+
+                if (_tabStripContent.Children.Count > 0)
+                    await _tabStripContainerScroll.ScrollToAsync(_tabStripContent.Children[tabStripIndex], ScrollToPosition.MakeVisible, false);
+            });
 
             if (newPosition != oldPosition)
             {
@@ -830,6 +911,8 @@ namespace Xamarin.Forms.TabView
 
         void UpdateTabContentLayout()
         {
+            BatchBegin();
+
             if (_tabStripContainer.IsVisible)
             {
                 if (TabStripPlacement == TabStripPlacement.Top)
@@ -848,6 +931,8 @@ namespace Xamarin.Forms.TabView
                 Grid.SetRow(_contentContainer, 0);
                 Grid.SetRowSpan(_contentContainer, 3);
             }
+
+            BatchCommit();
         }
 
         void UpdateTabStripBackgroundColor(Color tabStripBackgroundColor)
@@ -913,7 +998,7 @@ namespace Xamarin.Forms.TabView
 
         void UpdateTabIndicatorPlacement(TabIndicatorPlacement tabIndicatorPlacement)
         {
-            switch(tabIndicatorPlacement)
+            switch (tabIndicatorPlacement)
             {
                 case TabIndicatorPlacement.Top:
                     _tabStripIndicator.VerticalOptions = LayoutOptions.Start;
@@ -938,14 +1023,9 @@ namespace Xamarin.Forms.TabView
             _contentContainer.IsScrollAnimated = isTabTransitionEnabled;
         }
 
-        void UpdateTabTransition(IItemTransition tabTransition)
-        {
-            _contentContainer.Transition = tabTransition;
-        }
-
         void UpdateTabIndicatorPosition(int tabViewItemIndex)
         {
-            if (_tabStripContent == null)
+            if (_tabStripContent == null || _tabStripContent.Children.Count == 0 || tabViewItemIndex == -1)
                 return;
 
             var currentTabViewItem = _tabStripContent.Children[tabViewItemIndex];
@@ -958,9 +1038,9 @@ namespace Xamarin.Forms.TabView
             UpdateTabIndicatorPosition(currentTabViewItem);
         }
 
-        void UpdateTabIndicatorPosition(double offset)
+        void UpdateTabIndicatorPosition(ItemsViewScrolledEventArgs args)
         {
-            if (offset == 0)
+            if (args.HorizontalOffset == 0)
             {
                 UpdateTabIndicatorPosition(SelectedIndex);
                 return;
@@ -969,17 +1049,38 @@ namespace Xamarin.Forms.TabView
             if (_tabStripContent == null || TabItems.Count == 0)
                 return;
 
-            var currentTabViewItem = TabItems[SelectedIndex];
-            var currentTabViewItemWidth = currentTabViewItem.Width;
-            var currentTabViewItemContentWidth = currentTabViewItem.Content.Width;
+            if (_contentWidthCollection.Count == 0)
+                UpdateItemsSource(_contentContainer.ItemsSource);
 
-            UpdateTabIndicatorWidth(currentTabViewItemWidth);
+            var offset = args.HorizontalOffset;
+            bool toRight = args.HorizontalDelta > 0;
 
-            double percentage = -offset * 100 / currentTabViewItemContentWidth;
-            double position = currentTabViewItem.X + (percentage * currentTabViewItemWidth / 100);
+            int nextIndex = toRight ? _contentWidthCollection.FindIndex(c => c > offset) : _contentWidthCollection.FindLastIndex(c => c < offset);
+            int previousIndex = toRight ? nextIndex - 1 : nextIndex + 1;
 
-            _tabStripIndicator.TranslateTo(position, 0, TabIndicatorAnimationDuration, Easing.Linear);
-        }
+            if (previousIndex < 0 || nextIndex < 0)
+                return;
+
+            var itemsCount = TabItems.Count;
+
+            if (previousIndex > 0 && previousIndex < itemsCount)
+            {
+                var currentTabViewItem = TabItems[previousIndex];
+                var currentTabViewItemWidth = currentTabViewItem.Width;
+
+                UpdateTabIndicatorWidth(currentTabViewItemWidth);
+
+                var contentItemsCount = _contentWidthCollection.Count;
+
+                if (previousIndex > 0 && previousIndex < contentItemsCount)
+                {
+                    double progress = (offset - _contentWidthCollection[previousIndex]) / (_contentWidthCollection[nextIndex] - _contentWidthCollection[previousIndex]);
+                    double position = toRight ? currentTabViewItem.X + (currentTabViewItemWidth * progress) : currentTabViewItem.X - (currentTabViewItemWidth * progress);
+
+                    _tabStripIndicator.TranslateTo(position, 0, TabIndicatorAnimationDuration, Easing.Linear);
+                }
+            }
+        } 
 
         void UpdateTabIndicatorPosition(View currentTabViewItem)
         {
@@ -994,7 +1095,7 @@ namespace Xamarin.Forms.TabView
             handler?.Invoke(this, e);
         }
 
-        internal virtual void OnTabViewScrolled(ScrolledEventArgs e)
+        internal virtual void OnTabViewScrolled(ItemsViewScrolledEventArgs e)
         {
             TabViewScrolledEventHandler handler = Scrolled;
             handler?.Invoke(this, e);

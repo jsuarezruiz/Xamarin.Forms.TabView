@@ -4,13 +4,18 @@ using System.Globalization;
 namespace Xamarin.Forms.TabView
 {
     public class MaterialTabViewItemTemplate : Grid
-    { 
+    {
+        readonly VisualFeedbackEffect _visualFeedback;
+
         readonly Image _icon;
         readonly Label _text;
         readonly BadgeView _badge;
 
         public MaterialTabViewItemTemplate()
         {
+            _visualFeedback = new VisualFeedbackEffect();
+            Effects.Add(_visualFeedback);
+
             RowSpacing = 0;
 
             HorizontalOptions = LayoutOptions.FillAndExpand;
@@ -38,10 +43,8 @@ namespace Xamarin.Forms.TabView
 
             _badge = new BadgeView
             {
-                HeightRequest = 20,
-                WidthRequest = 20,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start
+                PlacementTarget = _icon,
+                Margin = new Thickness(0)
             };
 
             Children.Add(_icon);
@@ -70,6 +73,8 @@ namespace Xamarin.Forms.TabView
             _badge.SetBinding(BadgeView.BackgroundColorProperty, "CurrentBadgeBackgroundColor");
             _badge.SetBinding(BadgeView.TextProperty, "BadgeText");
             _badge.SetBinding(BadgeView.TextColorProperty, "BadgeTextColor");
+
+            VisualFeedbackEffect.SetFeedbackColor(this, Color.White);
         }
 
         protected override void OnSizeAllocated(double width, double height)

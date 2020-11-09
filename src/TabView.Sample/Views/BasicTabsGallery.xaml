@@ -7,7 +7,7 @@
     Title="Basic Tabs Gallery (XAML)">
     <ContentPage.Content>
         <Grid>
-            <controls:TabView 
+            <controls:TabView
                 TabStripPlacement="Bottom"
                 TabStripBackgroundColor="Blue"
                 TabStripHeight="60"

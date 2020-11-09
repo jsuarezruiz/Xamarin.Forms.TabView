@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Xamarin.Forms.TabView;assembly=Xamarin.Forms.TabView"
+    xmlns:viewmodels="clr-namespace:TabView.Sample.ViewModels"
+    x:Class="TabView.Sample.Views.UpdateTabItemsGallery"
+    Title="Update TabItems Gallery">
+    <ContentPage.BindingContext>
+        <viewmodels:TabItemsSourceViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <DataTemplate x:Key="TabViewItemTemplate">
+                <Grid>
+                    <Label
+                        Text="{Binding Name, Converter={StaticResource ToUpperConverter}}"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center" 
+                        TextColor="White"
+                        Margin="12, 0"/>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="TabContentTemplate">
+                <Grid
+                    Padding="10"
+                    RowSpacing="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Image
+                        Aspect="AspectFill"
+                        HeightRequest="250"
+                        WidthRequest="250"
+                        HorizontalOptions="Center"
+                        Source="{Binding Image}"/>
+                    <StackLayout
+                        Grid.Row="1">
+                        <Label
+                            Text="{Binding Name}"
+                            FontSize="Title"
+                            HorizontalOptions="Center"/>
+                        <Label
+                            Text="{Binding Location}"
+                            FontSize="Subtitle"
+                            HorizontalOptions="Center"/>
+                        <Label
+                            Text="{Binding Details}"
+                            FontSize="Small"
+                            HorizontalOptions="Center"
+                            Margin="0, 24, 0, 12"/>
+                    </StackLayout>
+                </Grid>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <controls:TabView
+                TabItemsSource="{Binding Monkeys}"
+                TabStripPlacement="Bottom"
+                TabStripBackgroundColor="Blue"
+                TabIndicatorColor="Yellow"
+                TabViewItemDataTemplate="{StaticResource TabViewItemTemplate}"
+                TabContentDataTemplate="{StaticResource TabContentTemplate}" />
+            <StackLayout
+                Grid.Row="1">
+                <Button
+                    Text="Clear Data"
+                    Command="{Binding ClearDataCommand}"/>
+                <Button
+                    Text="Update Data"
+                    Command="{Binding UpdateDataCommand}"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

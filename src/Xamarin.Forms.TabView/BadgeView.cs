@@ -1,17 +1,31 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Xamarin.Forms.TabView
 {
-    public class BadgeView : ContentView
+    public class BadgeView : TemplatedView
     {
-        Grid _badgeContainer;
-        BoxView _badgeShape;
+        internal const string ElementBorder = "PART_Border";
+        internal const string ElementText = "PART_Text";
+
+        Frame _badgeBorder;
         Label _badgeText;
         bool _isVisible;
 
         public BadgeView()
         {
-            Initialize();
+            ControlTemplate = new ControlTemplate(typeof(BadgeTemplate));
+        }
+
+        public static BindableProperty PlacementTargetProperty =
+            BindableProperty.Create(nameof(PlacementTarget), typeof(View), typeof(BadgeView), null);
+
+        public View PlacementTarget
+        {
+            get { return (View)GetValue(PlacementTargetProperty); }
+            set { SetValue(PlacementTargetProperty, value); }
         }
 
         public static BindableProperty AutoHideProperty =
@@ -62,6 +76,21 @@ namespace Xamarin.Forms.TabView
             (bindable as BadgeView)?.UpdateBackgroundColor((Color)newValue);
         }
 
+        public static BindableProperty BorderColorProperty =
+          BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(BadgeView), defaultValue: Color.Default,
+              propertyChanged: OnBorderColorChanged);
+
+        public Color BorderColor
+        {
+            get { return (Color)GetValue(BorderColorProperty); }
+            set { SetValue(BorderColorProperty, value); }
+        }
+
+        static void OnBorderColorChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            (bindable as BadgeView)?.UpdateBorderColor((Color)newValue);
+        }
+
         public static BindableProperty TextColorProperty =
             BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(BadgeView), defaultValue: Color.Default,
                 propertyChanged: OnTextColorChanged);
@@ -92,45 +121,81 @@ namespace Xamarin.Forms.TabView
             (bindable as BadgeView)?.UpdateText((string)newValue);
         }
 
-        void Initialize()
+        protected override void OnApplyTemplate()
         {
-            _badgeShape = new BoxView
-            {
-                BackgroundColor = BackgroundColor,
-                CornerRadius = GetCornerRadius()
-            };
+            base.OnApplyTemplate();
 
-            _badgeText = new Label
-            {
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
-                TextColor = TextColor,
-                Text = Text
-            };
+            _badgeBorder = GetTemplateChild(ElementBorder) as Frame;
+            _badgeText = GetTemplateChild(ElementText) as Label;
 
-            _badgeContainer = new Grid
-            {
-                Children = { _badgeShape, _badgeText }
-            };
-
-            Content = _badgeContainer;
+            UpdateSize();
+            UpdatePosition();
+            UpdateIsEnabled();
         }
 
-        int GetCornerRadius()
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (Device.RuntimePlatform == Device.Android)
-                return 60; 
-            else if (Device.RuntimePlatform == Device.macOS)
-                return 10;
-            else if (Device.RuntimePlatform == Device.UWP)
-                return 24;
+            base.OnPropertyChanged(propertyName);
 
-            return 12;
+            if (propertyName == IsEnabledProperty.PropertyName)
+                UpdateIsEnabled();
+        }
+
+        void UpdateIsEnabled()
+        {
+            if (IsEnabled)
+                _badgeText.PropertyChanged += OnBadgeTextPropertyChanged;
+            else
+                _badgeText.PropertyChanged -= OnBadgeTextPropertyChanged;
+        }
+
+        void OnBadgeTextPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Height):
+                case nameof(Width):
+                    UpdateSize();
+                    UpdatePosition();
+                    break;
+            }
+        }
+
+        void UpdateSize()
+        {
+            if (_badgeText == null || _badgeText.Width <= 0 || _badgeText.Height <= 0)
+                return;
+
+            double badgeTextHeight = _badgeText.Height + _badgeBorder.Padding.VerticalThickness / 2;
+            double badgeTextWidth = Math.Max(_badgeText.Width + _badgeBorder.Padding.HorizontalThickness / 2, badgeTextHeight);
+
+            _badgeBorder.HeightRequest = badgeTextHeight;
+            _badgeBorder.WidthRequest = badgeTextWidth;
+
+            _badgeBorder.CornerRadius = (int)Math.Round(badgeTextHeight / 2);
+        }
+
+        void UpdatePosition()
+        {
+            if (PlacementTarget == null)
+                return;
+
+            var x = PlacementTarget.X - PlacementTarget.Margin.HorizontalThickness;
+
+            if (Device.RuntimePlatform != Device.Android)
+                x += PlacementTarget.Width;
+
+            _badgeBorder.Margin = new Thickness(x, 0, 0, 0);
         }
 
         void UpdateBackgroundColor(Color backgroundColor)
         {
-            _badgeShape.BackgroundColor = backgroundColor;
+            _badgeBorder.BackgroundColor = backgroundColor;
+        }
+
+        void UpdateBorderColor(Color borderColor)
+        {
+            _badgeBorder.BorderColor = borderColor;
         }
 
         void UpdateTextColor(Color textColor)
