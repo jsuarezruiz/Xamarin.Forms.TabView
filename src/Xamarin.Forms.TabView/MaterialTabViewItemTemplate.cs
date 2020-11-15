@@ -65,7 +65,7 @@ namespace Xamarin.Forms.TabView
 
             _icon.SetBinding(Image.SourceProperty, "CurrentIcon");
 
-            _text.SetBinding(Label.TextProperty, "Text", BindingMode.OneWay, new ToUpperConverter());
+            _text.SetBinding(Label.TextProperty, "Text", BindingMode.OneWay);
             _text.SetBinding(Label.TextColorProperty, "CurrentTextColor");
             _text.SetBinding(Label.FontSizeProperty, "CurrentFontSize");
             _text.SetBinding(Label.FontAttributesProperty, "CurrentFontAttributes");
@@ -73,6 +73,8 @@ namespace Xamarin.Forms.TabView
             _badge.SetBinding(BadgeView.BackgroundColorProperty, "CurrentBadgeBackgroundColor");
             _badge.SetBinding(BadgeView.TextProperty, "BadgeText");
             _badge.SetBinding(BadgeView.TextColorProperty, "BadgeTextColor");
+            _icon.SetBinding(Image.HeightRequestProperty, "ImageHeight");
+            _icon.SetBinding(Image.WidthRequestProperty, "ImageWidth");
 
             VisualFeedbackEffect.SetFeedbackColor(this, Color.White);
         }

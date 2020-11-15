@@ -420,6 +420,44 @@ namespace Xamarin.Forms.TabView
             (bindable as TabView)?.UpdateIsSwipeEnabled((bool)newValue);
         }
 
+        //MyCode
+        public static readonly BindableProperty IsFloatingProperty =
+          BindableProperty.Create(nameof(IsFloating), typeof(bool), typeof(TabView), false,
+              propertyChanged: OnIsFloatingChanged);
+
+        public bool IsFloating
+        {
+            get => (bool)GetValue(IsFloatingProperty);
+            set { SetValue(IsFloatingProperty, value); }
+        }
+        static void OnIsFloatingChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            (bindable as TabView)?.UpdateIsFloating();
+        }
+
+        public static readonly BindableProperty MarginFromViewProperty =
+          BindableProperty.Create(nameof(MarginFromView), typeof(Thickness), typeof(TabView), new Thickness(0, 0),
+              propertyChanged: OnMarginFromViewChanged);
+
+        public Thickness MarginFromView
+        {
+            get => (Thickness)GetValue(MarginFromViewProperty);
+            set { SetValue(MarginFromViewProperty, value); }
+        }
+        static void OnMarginFromViewChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            (bindable as TabView)?.UpdateIMargin();
+        }
+
+        void UpdateIsFloating()
+        {
+            UpdateTabContentLayout();
+        }
+        void UpdateIMargin()
+        {
+            _tabStripContainer.Padding = MarginFromView;
+        }
+
         public delegate void TabSelectionChangedEventHandler(object sender, TabSelectionChangedEventArgs e);
 
         public event TabSelectionChangedEventHandler SelectionChanged;
@@ -920,6 +958,11 @@ namespace Xamarin.Forms.TabView
                     Grid.SetRow(_contentContainer, 1);
                     Grid.SetRowSpan(_contentContainer, 2);
                 }
+                else if (IsFloating == true)
+                {
+                    Grid.SetRow(_contentContainer, 0);
+                    Grid.SetRowSpan(_contentContainer, 3);
+                }
                 else
                 {
                     Grid.SetRow(_contentContainer, 0);
@@ -1063,7 +1106,7 @@ namespace Xamarin.Forms.TabView
 
             var itemsCount = TabItems.Count;
 
-            if (previousIndex > 0 && previousIndex < itemsCount)
+            if (previousIndex >= 0 && previousIndex < itemsCount)
             {
                 var currentTabViewItem = TabItems[previousIndex];
                 var currentTabViewItemWidth = currentTabViewItem.Width;
@@ -1072,7 +1115,7 @@ namespace Xamarin.Forms.TabView
 
                 var contentItemsCount = _contentWidthCollection.Count;
 
-                if (previousIndex > 0 && previousIndex < contentItemsCount)
+                if (previousIndex >= 0 && previousIndex < contentItemsCount)
                 {
                     double progress = (offset - _contentWidthCollection[previousIndex]) / (_contentWidthCollection[nextIndex] - _contentWidthCollection[previousIndex]);
                     double position = toRight ? currentTabViewItem.X + (currentTabViewItemWidth * progress) : currentTabViewItem.X - (currentTabViewItemWidth * progress);

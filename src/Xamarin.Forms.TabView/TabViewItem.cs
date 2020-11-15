@@ -9,6 +9,27 @@ namespace Xamarin.Forms.TabView
     {
         bool _isOnScreen;
 
+
+
+        public static readonly BindableProperty ImageHeightProperty =
+            BindableProperty.Create(nameof(ImageHeight), typeof(double), typeof(TabViewItem), 30.0);
+        public double ImageHeight
+        {
+            get => (double)GetValue(ImageHeightProperty);
+            set { SetValue(ImageHeightProperty, value); }
+        }
+
+        public static readonly BindableProperty ImageWidthProperty =
+            BindableProperty.Create(nameof(ImageWidth), typeof(double), typeof(TabViewItem), 30.0);
+        public double ImageWidth
+        {
+            get => (double)GetValue(ImageWidthProperty);
+            set { SetValue(ImageWidthProperty, value); }
+        }
+
+
+
+
         public static readonly BindableProperty TextProperty =
             BindableProperty.Create(nameof(Text), typeof(string), typeof(TabViewItem), string.Empty);
 

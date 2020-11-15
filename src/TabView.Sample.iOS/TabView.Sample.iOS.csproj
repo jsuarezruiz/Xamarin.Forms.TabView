@@ -134,6 +134,8 @@
     <ProjectReference Include="..\Xamarin.Forms.TabView.iOS\Xamarin.Forms.TabView.iOS.csproj">
       <Project>{459689E5-163C-49F8-956F-FB31D2C74443}</Project>
       <Name>Xamarin.Forms.TabView.iOS</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
